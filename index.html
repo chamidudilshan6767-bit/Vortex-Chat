@@ -1,445 +1,1580 @@
+```html
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vortex Chat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #121212; color: #e4e6eb; font-family: Arial, sans-serif; }
-        .fb-card { background-color: #242526; border: 1px solid #3a3b3c; border-radius: 8px; }
-        .btn-green { background-color: #00e676; color: #121212; font-weight: bold; }
-        .btn-green:hover { background-color: #00c853; }
-        input, textarea, select { background-color: #3a3b3c !important; color: #fff !important; border: 1px solid #4e4f50 !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VORTEX CHAT</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            vortex: {
+              900: '#0B0D11', // Main BG
+              800: '#141821', // Card BG
+              700: '#1F2430', // Elevated / Border
+              600: '#2A3142', // Input / Hover
+              500: '#3D465C', // Subtitle text
+              300: '#94A3B8', // Muted text
+              100: '#E2E8F0', // Bright text
+              accent: '#3B82F6', // Crisp subtle accent (Slate Blue)
+              silver: '#E2E8F0', // Glossy silver accent
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar for sleek Dark UI */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0D11;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2A3142;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3D465C;
+    }
+    /* Smooth transitions */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    /* Glossy Silver Button Style */
+    .btn-silver {
+      background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+    .btn-silver:hover {
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+    .card-matte {
+      background-color: #141821;
+      border: 1px solid #1F2430;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-[#0B0D11] text-slate-100 font-sans min-h-screen flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
 
-    <!-- Navbar -->
-    <header class="bg-[#242526] border-b border-[#3a3b3c] px-4 py-2 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-2">
-            <h1 class="text-xl font-bold text-[#00e676]">Vortex Chat</h1>
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-[#0B0D11]/90 backdrop-blur-md border-b border-[#1F2430] px-4 py-3">
+    <div class="max-w-3xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-700 to-slate-400 flex items-center justify-center font-black text-slate-950 text-xl tracking-wider shadow-inner">
+          V
         </div>
-        <div class="flex items-center gap-3">
-            <select id="langSwitch" onchange="changeLanguage()" class="text-xs px-2 py-1 rounded">
-                <option value="si">සිංහල</option>
-                <option value="en">English</option>
-            </select>
-            <div id="navUserArea" class="hidden flex items-center gap-2 text-sm">
-                <span id="navUsername" class="font-semibold"></span>
-                <button onclick="logout()" class="text-xs bg-red-600 px-2 py-1 rounded text-white">Logout</button>
+        <div>
+          <h1 class="font-extrabold text-lg tracking-wider text-slate-100 flex items-center gap-2">
+            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v2.0</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Header Controls: Lang Toggle & User Quick Avatar -->
+      <div class="flex items-center gap-3">
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium border border-slate-700 text-slate-300 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-globe text-slate-400"></i>
+          <span id="langText">EN / SI</span>
+        </button>
+
+        <div id="headerUserWidget" class="hidden items-center gap-2 cursor-pointer" onclick="switchTab('profile')">
+          <img id="headerAvatar" class="w-8 h-8 rounded-full object-cover border border-slate-600 bg-slate-800" src="" alt="Avatar">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-3xl mx-auto w-full flex-grow p-3 sm:p-4 mb-20">
+
+    <!-- AUTHENTICATION VIEW (MANDATORY REGISTRATION / LOGIN) -->
+    <section id="authSection" class="py-8">
+      <div class="card-matte rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 text-2xl">
+          <i class="fa-solid fa-[#000] fa-shield-halved"></i>
+        </div>
+        <h2 id="langAuthTitle" class="text-2xl font-bold text-white mb-1">Welcome to VORTEX</h2>
+        <p id="langAuthSubtitle" class="text-xs text-slate-400 mb-6">Enter your handle and profile details to get started.</p>
+
+        <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4 text-left">
+          <!-- Profile Pic Upload Pre-Login -->
+          <div class="flex flex-col items-center justify-center gap-2 mb-2">
+            <div class="relative group">
+              <img id="authAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-slate-600 bg-slate-800" src="https://placehold.co/150x150/1F2430/E2E8F0?text=Avatar" alt="Profile Preview">
+              <label for="authAvatarInput" class="absolute bottom-0 right-0 bg-slate-700 hover:bg-slate-600 p-2 rounded-full cursor-pointer text-xs border border-slate-500 shadow">
+                <i class="fa-solid fa-camera text-white"></i>
+              </label>
+              <input type="file" id="authAvatarInput" accept="image/*" class="hidden" onchange="previewAuthAvatar(event)">
             </div>
-        </div>
-    </header>
+            <span id="langUploadAvatar" class="text-xs text-slate-400">Upload Profile Picture (Optional)</span>
+          </div>
 
-    <!-- Main Container -->
-    <div id="appContainer" class="flex-1 max-w-4xl mx-auto w-full p-4">
+          <div>
+            <label id="langUsernameLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username (@handle)</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">@</span>
+              <input type="text" id="authUsername" required pattern="[a-zA-Z0-0_]{3,18}" title="3-18 characters, letters, numbers, underscores" placeholder="username" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 pl-8 pr-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
+            </div>
+          </div>
+
+          <div>
+            <label id="langDisplaynameLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Display Name</label>
+            <input type="text" id="authDisplayName" placeholder="e.g. Alex Vance" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
+          </div>
+
+          <button type="submit" class="w-full btn-silver font-bold py-3 rounded-xl text-sm tracking-wide shadow-md hover:opacity-95 transition">
+            <span id="langEnterVortex">ENTER VORTEX</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- APP CONTENT (HIDDEN UNTIL AUTH) -->
+    <div id="appContent" class="hidden">
+
+      <!-- TAB 1: FEED -->
+      <section id="tab-feed" class="tab-content active space-y-4">
         
-        <!-- AUTH SECTION -->
-        <div id="authSection" class="max-w-md mx-auto mt-10 fb-card p-6 shadow-lg">
-            <h2 id="authTitle" class="text-xl font-bold mb-4 text-[#00e676] text-center">Login to Vortex Chat</h2>
-            
-            <div id="loginForm" class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400">Username</label>
-                    <input type="text" id="loginUser" class="w-full p-2 rounded text-sm mt-1" placeholder="Enter username">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400">Password</label>
-                    <input type="password" id="loginPass" class="w-full p-2 rounded text-sm mt-1" placeholder="Enter password">
-                </div>
-                <button onclick="login()" class="w-full py-2 btn-green rounded text-sm">Login</button>
-                <p class="text-center text-xs mt-3">Don't have an account? <span onclick="toggleAuth(true)" class="text-[#00e676] cursor-pointer underline">Register</span></p>
+        <!-- CREATE POST BOX -->
+        <div class="card-matte rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <img id="feedPostUserAvatar" class="w-9 h-9 rounded-full object-cover border border-slate-700" src="" alt="User">
+              <div>
+                <div id="feedPostUserDisplay" class="text-xs font-bold text-slate-200">User</div>
+                <div class="text-[10px] text-slate-400" id="langPublicFeed">Public Cyber Wall</div>
+              </div>
             </div>
 
-            <div id="regForm" class="space-y-4 hidden">
-                <div>
-                    <label class="text-xs text-gray-400">Choose Unique Username</label>
-                    <input type="text" id="regUser" class="w-full p-2 rounded text-sm mt-1" placeholder="Unique username">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400">Password</label>
-                    <input type="password" id="regPass" class="w-full p-2 rounded text-sm mt-1" placeholder="Password">
-                </div>
-                <button onclick="register()" class="w-full py-2 btn-green rounded text-sm">Register</button>
-                <p class="text-center text-xs mt-3">Already have an account? <span onclick="toggleAuth(false)" class="text-[#00e676] cursor-pointer underline">Login</span></p>
-            </div>
+            <!-- Anonymous Toggle -->
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-slate-300">
+              <input type="checkbox" id="anonToggle" class="rounded bg-slate-800 border-slate-700 text-slate-300 focus:ring-0">
+              <span id="langAnonPost">Anon Mode</span>
+            </label>
+          </div>
+
+          <textarea id="postInput" rows="3" placeholder="What's happening in the network?" class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
+
+          <!-- Image Preview -->
+          <div id="postImagePreviewContainer" class="hidden relative my-2">
+            <img id="postImagePreview" class="max-h-56 rounded-xl object-cover w-full border border-slate-700" src="" alt="Preview">
+            <button onclick="removePostImage()" class="absolute top-2 right-2 bg-slate-900/80 text-white rounded-full p-1.5 hover:bg-slate-800 border border-slate-600">
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800/80">
+            <label class="flex items-center gap-2 text-xs text-slate-400 hover:text-slate-200 cursor-pointer px-2 py-1 rounded hover:bg-slate-800/50 transition">
+              <i class="fa-solid fa-image text-slate-400"></i>
+              <span id="langAttachPhoto">Photo</span>
+              <input type="file" id="postImageInput" accept="image/*" class="hidden" onchange="handlePostImageSelect(event)">
+            </label>
+
+            <button onclick="publishPost()" class="btn-silver px-5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span id="langPublishBtn">Publish</span>
+            </button>
+          </div>
         </div>
 
-        <!-- MAIN SOCIAL FEED SECTION -->
-        <div id="socialSection" class="hidden space-y-6">
-            
-            <!-- Navigation Tabs & Admin Link -->
-            <div class="flex justify-between items-center fb-card p-3">
-                <div class="flex gap-4 text-sm font-semibold">
-                    <button onclick="switchTab('feed')" id="tabFeed" class="text-[#00e676] border-b-2 border-[#00e676] pb-1">Feed</button>
-                    <button onclick="switchTab('friends')" id="tabFriends" class="text-gray-400">Friends</button>
-                </div>
-                <button onclick="openAdminModal()" class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded text-white">
-                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin Panel
-                </button>
-            </div>
-
-            <!-- Feed Tab Content -->
-            <div id="feedContent" class="space-y-4">
-                <!-- Create Post Box -->
-                <div class="fb-card p-4 space-y-3">
-                    <textarea id="postText" rows="2" class="w-full p-2 rounded text-sm resize-none" placeholder="What's on your mind?"></textarea>
-                    <input type="text" id="postImage" class="w-full p-2 rounded text-sm" placeholder="Image URL (Optional)">
-                    <div class="flex justify-end">
-                        <button onclick="createPost()" class="px-4 py-1.5 btn-green rounded text-sm">Post</button>
-                    </div>
-                </div>
-
-                <!-- Posts List -->
-                <div id="postsList" class="space-y-4">
-                    <!-- Dynamic Posts -->
-                </div>
-            </div>
-
-            <!-- Friends Tab Content -->
-            <div id="friendsContent" class="hidden space-y-4">
-                <div class="fb-card p-4">
-                    <h3 class="font-bold text-sm mb-3 text-[#00e676]">Find People & Friends</h3>
-                    <div id="usersList" class="space-y-2">
-                        <!-- Dynamic Users List -->
-                    </div>
-                </div>
-            </div>
-
+        <!-- POSTS FEED CONTAINER -->
+        <div id="postsFeed" class="space-y-4">
+          <!-- Dynamic Posts Injection -->
         </div>
+      </section>
+
+      <!-- TAB 2: GROUPS -->
+      <section id="tab-groups" class="tab-content space-y-4">
+        
+        <!-- CREATE GROUP & LIST HEADER -->
+        <div class="flex items-center justify-between">
+          <h2 id="langGroupsTitle" class="text-lg font-bold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-users text-slate-400"></i>
+            <span>Groups Hub</span>
+          </h2>
+          <button onclick="openCreateGroupModal()" class="btn-silver px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span id="langCreateGroupBtn">Create Group</span>
+          </button>
+        </div>
+
+        <!-- GROUPS LIST -->
+        <div id="groupsList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- Dynamic Groups Injection -->
+        </div>
+
+        <!-- ACTIVE GROUP VIEW (HIDDEN BY DEFAULT) -->
+        <div id="activeGroupContainer" class="hidden space-y-4">
+          <button onclick="closeActiveGroup()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 mb-2">
+            <i class="fa-solid fa-arrow-left"></i> <span id="langBackToGroups">Back to Groups</span>
+          </button>
+
+          <div class="card-matte rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4">
+            <img id="agAvatar" class="w-16 h-16 rounded-2xl object-cover border border-slate-700 bg-slate-800" src="" alt="Group">
+            <div class="flex-1 text-center sm:text-left">
+              <div class="flex items-center justify-center sm:justify-start gap-2">
+                <h3 id="agTitle" class="text-lg font-bold text-white"></h3>
+                <span id="agBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300"></span>
+              </div>
+              <p id="agDescription" class="text-xs text-slate-400 mt-1"></p>
+              <div class="text-[10px] text-slate-500 mt-2 flex items-center justify-center sm:justify-start gap-3">
+                <span id="agMembersCount"><i class="fa-solid fa-user-group mr-1"></i>0 Members</span>
+                <span id="agCreatedBy"><i class="fa-solid fa-crown mr-1"></i>Admin</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- GROUP POST BOX -->
+          <div class="card-matte rounded-2xl p-4">
+            <textarea id="groupPostInput" rows="2" placeholder="Post something to group wall..." class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
+            <div class="flex items-center justify-between mt-2">
+              <label class="text-xs text-slate-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-image"></i>
+                <input type="file" id="groupPostImg" accept="image/*" class="hidden" onchange="handleGroupPostImg(event)">
+              </label>
+              <button onclick="publishGroupPost()" class="btn-silver px-4 py-1.5 rounded-xl text-xs font-bold">Post to Group</button>
+            </div>
+          </div>
+
+          <!-- GROUP FEED -->
+          <div id="groupPostsFeed" class="space-y-4"></div>
+        </div>
+
+      </section>
+
+      <!-- TAB 3: DIRECT CHAT -->
+      <section id="tab-chat" class="tab-content space-y-4">
+        <div class="card-matte rounded-2xl p-4">
+          <h2 id="langDirectChatTitle" class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-comments text-slate-400"></i> No-Number Direct Chat
+          </h2>
+          <p id="langDirectChatSub" class="text-xs text-slate-400 mb-4">Start a private chat instantly using any user's @username.</p>
+
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">@</span>
+              <input type="text" id="targetChatUsername" placeholder="recipient_username" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2 pl-8 pr-3 text-sm text-white focus:outline-none focus:border-slate-500">
+            </div>
+            <button onclick="startOrOpenChat()" class="btn-silver px-4 py-2 rounded-xl text-xs font-bold">
+              <span id="langStartChatBtn">Open Chat</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CHAT BOX -->
+        <div id="chatRoomBox" class="hidden card-matte rounded-2xl p-4 flex flex-col h-[420px]">
+          <!-- Chat Header -->
+          <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <img id="chatPeerAvatar" class="w-8 h-8 rounded-full object-cover border border-slate-700" src="" alt="Peer">
+              <div>
+                <div id="chatPeerName" class="text-xs font-bold text-white">@user</div>
+                <div class="text-[10px] text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> End-to-End Local Session
+                </div>
+              </div>
+            </div>
+            <button onclick="closeChatRoom()" class="text-slate-400 hover:text-white text-xs">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Chat Messages Area -->
+          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto py-3 space-y-2 pr-1">
+            <!-- Dynamic Messages -->
+          </div>
+
+          <!-- Chat Input Area -->
+          <div class="pt-2 border-t border-slate-800 flex gap-2">
+            <input type="text" id="chatMessageInput" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Type a message..." class="flex-1 bg-[#0B0D11] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-600">
+            <button onclick="sendChatMessage()" class="btn-silver px-4 py-2 rounded-xl text-xs font-bold">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: USER PROFILE -->
+      <section id="tab-profile" class="tab-content space-y-4">
+        <!-- USER CARD -->
+        <div class="card-matte rounded-2xl p-6 text-center relative overflow-hidden">
+          <div class="absolute top-3 right-3 flex gap-2">
+            <button onclick="openEditProfileModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700">
+              <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+            </button>
+          </div>
+
+          <div class="relative w-24 h-24 mx-auto mb-3">
+            <img id="profileDisplayAvatar" class="w-24 h-24 rounded-full object-cover border-2 border-slate-600 bg-slate-800 shadow-lg" src="" alt="Profile">
+          </div>
+
+          <h2 id="profileDisplayName" class="text-xl font-bold text-white"></h2>
+          <div id="profileHandle" class="text-xs text-slate-400 font-mono mb-3">@handle</div>
+
+          <p id="profileBio" class="text-xs text-slate-300 max-w-md mx-auto mb-4 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">No bio provided yet.</p>
+
+          <div class="flex justify-center gap-3 pt-2">
+            <button onclick="generateProfileCertificate()" class="btn-silver px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+              <i class="fa-solid fa-award"></i>
+              <span id="langGetCert">Get Vortex Digital Certificate</span>
+            </button>
+            <button onclick="logout()" class="px-4 py-2 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 hover:bg-red-900/50 text-xs font-bold">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- USER POSTS -->
+        <div>
+          <h3 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">My Posts</h3>
+          <div id="myPostsFeed" class="space-y-4"></div>
+        </div>
+      </section>
+
+      <!-- TAB 5: ADMIN PANEL -->
+      <section id="tab-admin" class="tab-content space-y-4">
+        <!-- ADMIN LOCK SCREEN -->
+        <div id="adminLock" class="card-matte rounded-2xl p-6 text-center max-w-md mx-auto">
+          <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 text-xl mx-auto mb-3">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <h2 class="text-lg font-bold text-white mb-1">Root Admin Clearance</h2>
+          <p class="text-xs text-slate-400 mb-4">Enter master passkey to access system management.</p>
+          <div class="space-y-3">
+            <input type="password" id="adminPasskeyInput" placeholder="Master Passkey" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white text-center focus:outline-none">
+            <button onclick="verifyAdminPasskey()" class="w-full btn-silver py-2.5 rounded-xl text-xs font-bold">Authenticate</button>
+          </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD (UNLOCKED) -->
+        <div id="adminDashboard" class="hidden space-y-4">
+          <div class="flex items-center justify-between card-matte p-4 rounded-2xl">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-emerald-400"></i> Admin Panel
+              </h2>
+              <p class="text-[10px] text-slate-400">Delete posts, moderate groups, manage platform data.</p>
+            </div>
+            <button onclick="lockAdmin()" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs">Lock</button>
+          </div>
+
+          <!-- ADMIN CONTROLS -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- ALL POSTS MODERATION -->
+            <div class="card-matte p-4 rounded-2xl">
+              <h3 class="text-xs font-bold text-slate-300 uppercase mb-3">Global Posts Moderation</h3>
+              <div id="adminPostsList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- ALL GROUPS MODERATION -->
+            <div class="card-matte p-4 rounded-2xl">
+              <h3 class="text-xs font-bold text-slate-300 uppercase mb-3">Global Groups Moderation</h3>
+              <div id="adminGroupsList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
+  </main>
 
-    <!-- ADMIN MODAL -->
-    <div id="adminModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-        <div class="fb-card p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
-                <h3 class="font-bold text-lg text-[#00e676]">Admin Control Panel</h3>
-                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div id="adminLoginBox" class="space-y-3">
-                <p class="text-xs text-gray-400">Enter Admin Password to access controls:</p>
-                <input type="password" id="adminPassInput" class="w-full p-2 rounded text-sm" placeholder="Password">
-                <button onclick="verifyAdmin()" class="w-full py-2 btn-green rounded text-sm">Access Admin</button>
-            </div>
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0D11]/95 backdrop-blur-md border-t border-[#1F2430] py-2 px-3">
+    <div class="max-w-md mx-auto flex justify-between items-center text-slate-400">
+      
+      <button onclick="switchTab('feed')" id="nav-feed" class="nav-btn flex flex-col items-center gap-1 text-xs py-1 px-3 rounded-xl transition text-white">
+        <i class="fa-solid fa-newspaper text-base"></i>
+        <span id="langNavFeed" class="text-[10px] font-medium">Feed</span>
+      </button>
 
-            <div id="adminDashboard" class="hidden space-y-4">
-                <p class="text-xs text-emerald-400 font-semibold">✓ Admin Authenticated Successfully. You can delete any post below:</p>
-                <div id="adminPostsList" class="space-y-3">
-                    <!-- Admin Post Items with Delete Button -->
-                </div>
-            </div>
-        </div>
+      <button onclick="switchTab('groups')" id="nav-groups" class="nav-btn flex flex-col items-center gap-1 text-xs py-1 px-3 rounded-xl transition">
+        <i class="fa-solid fa-users text-base"></i>
+        <span id="langNavGroups" class="text-[10px] font-medium">Groups</span>
+      </button>
+
+      <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn flex flex-col items-center gap-1 text-xs py-1 px-3 rounded-xl transition">
+        <i class="fa-solid fa-paper-plane text-base"></i>
+        <span id="langNavChat" class="text-[10px] font-medium">Chat</span>
+      </button>
+
+      <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1 text-xs py-1 px-3 rounded-xl transition">
+        <i class="fa-solid fa-user text-base"></i>
+        <span id="langNavProfile" class="text-[10px] font-medium">Profile</span>
+      </button>
+
+      <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn flex flex-col items-center gap-1 text-xs py-1 px-3 rounded-xl transition">
+        <i class="fa-solid fa-shield text-base"></i>
+        <span id="langNavAdmin" class="text-[10px] font-medium">Admin</span>
+      </button>
+
     </div>
+  </nav>
 
-    <!-- App Download Section on Homepage Footer -->
-    <footer class="text-center py-4 border-t border-gray-800 text-xs text-gray-500 mt-auto">
-        <p>Vortex Chat Platform © 2026. Normal Facebook Style UI.</p>
-    </footer>
+  <!-- MODAL: CREATE GROUP -->
+  <div id="modalCreateGroup" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-matte rounded-2xl max-w-md w-full p-5 space-y-4 relative">
+      <button onclick="closeCreateGroupModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-base font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-user-group text-slate-400"></i> Create New Group
+      </h3>
 
-    <!-- JavaScript Application Logic -->
-    <script>
-        // LocalStorage initialization
-        let users = JSON.parse(localStorage.getItem('vortex_users')) || [];
-        let posts = JSON.parse(localStorage.getItem('vortex_posts')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('vortex_current')) || null;
+      <div class="space-y-3">
+        <!-- Group Avatar Upload -->
+        <div class="flex items-center gap-3">
+          <img id="groupAvatarPreview" class="w-12 h-12 rounded-xl object-cover border border-slate-700 bg-slate-800" src="https://placehold.co/100x100/1F2430/E2E8F0?text=Grp" alt="Group Avatar">
+          <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 cursor-pointer">
+            Upload Avatar
+            <input type="file" id="groupAvatarInput" accept="image/*" class="hidden" onchange="previewGroupAvatar(event)">
+          </label>
+        </div>
 
-        const ADMIN_SECRET = "#chAmidu_diLshan*600008*#";
+        <div>
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Group Name</label>
+          <input type="text" id="groupNameInput" placeholder="Cyber Hackers Room" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+        </div>
 
-        // Initialize state
-        if (currentUser) {
-            showSocialApp();
+        <div>
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Description</label>
+          <textarea id="groupDescInput" rows="2" placeholder="Brief group purpose..." class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Group Visibility</label>
+          <select id="groupTypeSelect" onchange="toggleGroupPasscodeField()" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+            <option value="public">Public Group (Open to everyone)</option>
+            <option value="private">Private Group (Requires 4-Digit Passcode)</option>
+          </select>
+        </div>
+
+        <div id="passcodeFieldContainer" class="hidden">
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">4-Digit Passcode</label>
+          <input type="password" id="groupPasscodeInput" maxlength="4" placeholder="1234" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono tracking-widest text-center focus:outline-none">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeCreateGroupModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs">Cancel</button>
+        <button onclick="submitCreateGroup()" class="btn-silver px-5 py-2 rounded-xl text-xs font-bold">Create Group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT PROFILE -->
+  <div id="modalEditProfile" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-matte rounded-2xl max-w-md w-full p-5 space-y-4 relative">
+      <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-base font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-user-pen text-slate-400"></i> Edit Profile
+      </h3>
+
+      <div class="space-y-3">
+        <!-- Profile Avatar Change -->
+        <div class="flex flex-col items-center gap-2">
+          <img id="editAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-slate-600 bg-slate-800" src="" alt="Avatar">
+          <label class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 cursor-pointer">
+            Change Photo
+            <input type="file" id="editAvatarInput" accept="image/*" class="hidden" onchange="previewEditAvatar(event)">
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Display Name</label>
+          <input type="text" id="editDisplayNameInput" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Bio</label>
+          <textarea id="editBioInput" rows="2" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none resize-none"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeEditProfileModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs">Cancel</button>
+        <button onclick="saveProfileChanges()" class="btn-silver px-5 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PASSCODE ENTRY FOR PRIVATE GROUPS -->
+  <div id="modalPasscodePrompt" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-matte rounded-2xl max-w-xs w-full p-5 space-y-4 text-center">
+      <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 mx-auto">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <h3 class="text-sm font-bold text-white">Private Group Access</h3>
+      <p class="text-xs text-slate-400">Enter 4-digit passcode to join this group.</p>
+
+      <input type="password" id="joinPasscodeInput" maxlength="4" placeholder="••••" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2 text-center font-mono text-sm tracking-widest text-white focus:outline-none">
+
+      <div class="flex gap-2">
+        <button onclick="closePasscodePrompt()" class="flex-1 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs">Cancel</button>
+        <button onclick="submitPasscodeJoin()" class="flex-1 btn-silver py-2 rounded-xl text-xs font-bold">Join</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DIGITAL CERTIFICATE GENERATOR PREVIEW -->
+  <div id="modalCertificate" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-matte rounded-2xl max-w-lg w-full p-6 space-y-4 relative">
+      <button onclick="closeCertificateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      
+      <!-- CERTIFICATE CANVAS / CONTAINER -->
+      <div id="certContainer" class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-slate-600 rounded-xl p-6 text-center space-y-3 relative overflow-hidden">
+        <div class="text-[10px] tracking-widest uppercase text-slate-400">VORTEX CYBER NETWORK</div>
+        <h2 class="text-xl font-black text-slate-100 tracking-wider">OFFICIAL PROFILE CERTIFICATE</h2>
+        <div class="w-12 h-0.5 bg-slate-500 mx-auto my-2"></div>
+
+        <div class="my-4">
+          <img id="certAvatar" class="w-16 h-16 rounded-full mx-auto border-2 border-slate-500 object-cover mb-2" src="" alt="Cert Avatar">
+          <div id="certName" class="text-base font-bold text-white">---</div>
+          <div id="certHandle" class="text-xs text-slate-400 font-mono">@handle</div>
+        </div>
+
+        <p class="text-[11px] text-slate-300 px-4">
+          This digital badge verifies that the handle above is an authenticated member of the Vortex Decentralized Underground Network.
+        </p>
+
+        <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-[9px] text-slate-500 font-mono">
+          <div>ID: <span id="certUid">VX-0000</span></div>
+          <div>ISSUED: <span id="certDate">2026</span></div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button onclick="closeCertificateModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed top-4 right-4 z-50 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+    <i class="fa-solid fa-circle-info text-slate-400"></i>
+    <span id="toastMessage">Notification</span>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    /* LOCAL STORAGE DATA SCHEMAS & INITIALIZATION */
+    const STORAGE_USERS = 'vortex_users_v2';
+    const STORAGE_CURRENT = 'vortex_current_user_v2';
+    const STORAGE_POSTS = 'vortex_posts_v2';
+    const STORAGE_GROUPS = 'vortex_groups_v2';
+    const STORAGE_MESSAGES = 'vortex_messages_v2';
+
+    const MASTER_ADMIN_PASSKEY = "#chAmidu_diLshan*600008*#";
+
+    let currentUser = JSON.parse(localStorage.getItem(STORAGE_CURRENT)) || null;
+    let currentLang = 'en'; // 'en' or 'si'
+    let pendingPostImg = null;
+    let pendingAuthImg = null;
+    let pendingGroupImg = null;
+    let pendingEditImg = null;
+    let pendingGroupPostImg = null;
+    let activeGroupId = null;
+    let pendingJoinGroupId = null;
+    let activeChatPeer = null;
+
+    // Translations Object
+    const i18n = {
+      en: {
+        authTitle: "Welcome to VORTEX",
+        authSub: "Enter your handle and profile details to get started.",
+        uploadAvatar: "Upload Profile Picture (Optional)",
+        userLabel: "Username (@handle)",
+        dispLabel: "Display Name",
+        enterBtn: "ENTER VORTEX",
+        publicFeed: "Public Cyber Wall",
+        anonPost: "Anon Mode",
+        attachPhoto: "Photo",
+        publishBtn: "Publish",
+        groupsTitle: "Groups Hub",
+        createGrpBtn: "Create Group",
+        backToGroups: "Back to Groups",
+        directChatTitle: "No-Number Direct Chat",
+        directChatSub: "Start a private chat instantly using any user's @username.",
+        startChatBtn: "Open Chat",
+        getCert: "Get Vortex Digital Certificate",
+        navFeed: "Feed",
+        navGroups: "Groups",
+        navChat: "Chat",
+        navProfile: "Profile",
+        navAdmin: "Admin",
+      },
+      si: {
+        authTitle: "VORTEX වෙත සාදරයෙන් පිළිගනිමු",
+        authSub: "ආරම්භ කිරීමට ඔබගේ username සහ profile තොරතුරු ඇතුළත් කරන්න.",
+        uploadAvatar: "Profile පින්තූරයක් එක් කරන්න (අත්‍යවශ්‍ය නොවේ)",
+        userLabel: "Username (@handle)",
+        dispLabel: "පෙන්විය යුතු නම (Display Name)",
+        enterBtn: "VORTEX වෙත පිවිසෙන්න",
+        publicFeed: "පොදු Cyber Wall එක",
+        anonPost: "රහස්‍ය (Anon) මාදිලිය",
+        attachPhoto: "ඡායාරූපය",
+        publishBtn: "පළ කරන්න",
+        groupsTitle: "Group එකතු",
+        createGrpBtn: "Group එකක් සාදන්න",
+        backToGroups: "ආපසු Groups වෙත",
+        directChatTitle: "දුරකථන අංක නැති Direct Chat",
+        directChatSub: "ඕනෑම කෙනෙකුගේ @username භාවිතයෙන් ක්ෂණිකව private chat කරන්න.",
+        startChatBtn: "Chat එක ඇරඹුම",
+        getCert: "Vortex Digital Certificate එක ගන්න",
+        navFeed: "Feed එක",
+        navGroups: "Groups",
+        navChat: "Chat",
+        navProfile: "Profile",
+        navAdmin: "Admin",
+      }
+    };
+
+    // Default Fallback Avatar SVG Data URL
+    const DEFAULT_AVATAR = "https://placehold.co/150x150/1F2430/E2E8F0?text=User";
+
+    // App Startup Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initSeedData();
+      checkAuthState();
+      renderFeed();
+      renderGroups();
+      applyLanguage();
+    });
+
+    /* SEED INITIAL DATA IF EMPTY */
+    function initSeedData() {
+      if (!localStorage.getItem(STORAGE_POSTS)) {
+        const seedPosts = [
+          {
+            id: 'post_1',
+            authorUsername: 'vortex_official',
+            authorDisplayName: 'Vortex System',
+            authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
+            content: 'Welcome to VORTEX Chat v2.0! No phone numbers needed. Enjoy clean dark mode, private/public groups, custom profile photos, and instant messaging.',
+            image: null,
+            likes: ['vortex_official'],
+            comments: [
+              { author: 'cyber_pioneer', text: 'Clean minimal dark theme looks great!' }
+            ],
+            isAnon: false,
+            timestamp: Date.now() - 3600000
+          }
+        ];
+        localStorage.setItem(STORAGE_POSTS, JSON.stringify(seedPosts));
+      }
+
+      if (!localStorage.getItem(STORAGE_GROUPS)) {
+        const seedGroups = [
+          {
+            id: 'grp_public_1',
+            name: 'Cyber Underground',
+            description: 'Public channel for tech discussions, dark UI designs, and privacy news.',
+            avatar: 'https://placehold.co/150x150/1F2430/E2E8F0?text=CU',
+            isPrivate: false,
+            passcode: '',
+            createdBy: 'vortex_official',
+            members: ['vortex_official'],
+            posts: [
+              {
+                id: 'gp_1',
+                authorUsername: 'vortex_official',
+                authorDisplayName: 'Vortex System',
+                authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
+                content: 'Welcome to the Cyber Underground public group wall!',
+                timestamp: Date.now() - 1800000
+              }
+            ]
+          },
+          {
+            id: 'grp_private_1',
+            name: 'Shadow Ops Vault',
+            description: 'Private encrypted circle. Enter 4-digit passcode to join.',
+            avatar: 'https://placehold.co/150x150/1F2430/94A3B8?text=SO',
+            isPrivate: true,
+            passcode: '1234',
+            createdBy: 'vortex_official',
+            members: ['vortex_official'],
+            posts: []
+          }
+        ];
+        localStorage.setItem(STORAGE_GROUPS, JSON.stringify(seedGroups));
+      }
+
+      if (!localStorage.getItem(STORAGE_MESSAGES)) {
+        localStorage.setItem(STORAGE_MESSAGES, JSON.stringify({}));
+      }
+    }
+
+    /* AUTHENTICATION CONTROL */
+    function checkAuthState() {
+      if (currentUser) {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('appContent').classList.remove('hidden');
+        document.getElementById('bottomNav').classList.remove('hidden');
+        document.getElementById('headerUserWidget').classList.remove('hidden');
+        document.getElementById('headerUserWidget').classList.add('flex');
+
+        // Update header & post box user UI
+        document.getElementById('headerAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
+        document.getElementById('feedPostUserAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
+        document.getElementById('feedPostUserDisplay').textContent = currentUser.displayName || `@${currentUser.username}`;
+        
+        renderProfile();
+      } else {
+        document.getElementById('authSection').classList.remove('hidden');
+        document.getElementById('appContent').classList.add('hidden');
+        document.getElementById('bottomNav').classList.add('hidden');
+        document.getElementById('headerUserWidget').classList.add('hidden');
+      }
+    }
+
+    function previewAuthAvatar(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pendingAuthImg = evt.target.result;
+          document.getElementById('authAvatarPreview').src = pendingAuthImg;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleAuth(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById('authUsername').value.trim().toLowerCase();
+      const displayNameInput = document.getElementById('authDisplayName').value.trim() || usernameInput;
+
+      if (!usernameInput) return;
+
+      let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
+      
+      // Save or fetch user
+      if (!users[usernameInput]) {
+        users[usernameInput] = {
+          username: usernameInput,
+          displayName: displayNameInput,
+          avatar: pendingAuthImg || DEFAULT_AVATAR,
+          bio: 'Decentralized Vortex network enthusiast.',
+          joinedAt: new Date().toLocaleDateString()
+        };
+      } else {
+        // If avatar changed during login
+        if (pendingAuthImg) {
+          users[usernameInput].avatar = pendingAuthImg;
         }
-
-        function toggleAuth(isReg) {
-            if (isReg) {
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('regForm').classList.remove('hidden');
-                document.getElementById('authTitle').innerText = "Register New Account";
-            } else {
-                document.getElementById('regForm').classList.add('hidden');
-                document.getElementById('loginForm').classList.remove('hidden');
-                document.getElementById('authTitle').innerText = "Login to Vortex Chat";
-            }
+        if (displayNameInput) {
+          users[usernameInput].displayName = displayNameInput;
         }
+      }
 
-        function register() {
-            const username = document.getElementById('regUser').value.trim();
-            const password = document.getElementById('regPass').value.trim();
-            if (!username || !password) { alert('Please fill all fields'); return; }
+      localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+      currentUser = users[usernameInput];
+      localStorage.setItem(STORAGE_CURRENT, JSON.stringify(currentUser));
 
-            if (users.some(u => u.username === username)) {
-                alert('Username already taken! Choose another.');
-                return;
-            }
+      showToast(`Logged in as @${currentUser.username}`);
+      checkAuthState();
+    }
 
-            const newUser = { username, password, friends: [] };
-            users.push(newUser);
-            localStorage.setItem('vortex_users', JSON.stringify(users));
-            alert('Registration successful! Please login.');
-            toggleAuth(false);
-        }
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem(STORAGE_CURRENT);
+      checkAuthState();
+      showToast('Logged out successfully.');
+    }
 
-        function login() {
-            const username = document.getElementById('loginUser').value.trim();
-            const password = document.getElementById('loginPass').value.trim();
+    /* NAVIGATION TABS SWITCHING */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add('active');
 
-            const user = users.find(u => u.username === username && u.password === password);
-            if (!user) {
-                alert('Invalid username or password!');
-                return;
-            }
+      // Update Nav Button Active Styling
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-white');
+        btn.classList.add('text-slate-400');
+      });
+      const activeNavBtn = document.getElementById(`nav-${tabId}`);
+      if (activeNavBtn) {
+        activeNavBtn.classList.remove('text-slate-400');
+        activeNavBtn.classList.add('text-white');
+      }
 
-            currentUser = user;
-            localStorage.setItem('vortex_current', JSON.stringify(currentUser));
-            showSocialApp();
-        }
+      if (tabId === 'feed') renderFeed();
+      if (tabId === 'groups') renderGroups();
+      if (tabId === 'profile') renderProfile();
+      if (tabId === 'admin') renderAdminLists();
+    }
 
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('vortex_current');
-            document.getElementById('authSection').classList.remove('hidden');
-            document.getElementById('socialSection').classList.add('hidden');
-            document.getElementById('navUserArea').classList.add('hidden');
-        }
+    /* LANGUAGE SWITCHER */
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'si' : 'en';
+      applyLanguage();
+    }
 
-        function showSocialApp() {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('socialSection').classList.remove('hidden');
-            document.getElementById('navUserArea').classList.remove('hidden');
-            document.getElementById('navUsername').innerText = currentUser.username;
-            renderFeed();
-            renderUsers();
-        }
+    function applyLanguage() {
+      const lang = i18n[currentLang];
+      document.getElementById('langAuthTitle').textContent = lang.authTitle;
+      document.getElementById('langAuthSubtitle').textContent = lang.authSub;
+      document.getElementById('langUploadAvatar').textContent = lang.uploadAvatar;
+      document.getElementById('langUsernameLabel').textContent = lang.userLabel;
+      document.getElementById('langDisplaynameLabel').textContent = lang.dispLabel;
+      document.getElementById('langEnterVortex').textContent = lang.enterBtn;
+      document.getElementById('langPublicFeed').textContent = lang.publicFeed;
+      document.getElementById('langAnonPost').textContent = lang.anonPost;
+      document.getElementById('langAttachPhoto').textContent = lang.attachPhoto;
+      document.getElementById('langPublishBtn').textContent = lang.publishBtn;
+      document.getElementById('langGroupsTitle').textContent = lang.groupsTitle;
+      document.getElementById('langCreateGroupBtn').textContent = lang.createGrpBtn;
+      document.getElementById('langBackToGroups').textContent = lang.backToGroups;
+      document.getElementById('langDirectChatTitle').textContent = lang.directChatTitle;
+      document.getElementById('langDirectChatSub').textContent = lang.directChatSub;
+      document.getElementById('langStartChatBtn').textContent = lang.startChatBtn;
+      document.getElementById('langGetCert').textContent = lang.getCert;
+      document.getElementById('langNavFeed').textContent = lang.navFeed;
+      document.getElementById('langNavGroups').textContent = lang.navGroups;
+      document.getElementById('langNavChat').textContent = lang.navChat;
+      document.getElementById('langNavProfile').textContent = lang.navProfile;
+      document.getElementById('langNavAdmin').textContent = lang.navAdmin;
+    }
 
-        function switchTab(tab) {
-            if (tab === 'feed') {
-                document.getElementById('feedContent').classList.remove('hidden');
-                document.getElementById('friendsContent').classList.add('hidden');
-                document.getElementById('tabFeed').className = "text-[#00e676] border-b-2 border-[#00e676] pb-1";
-                document.getElementById('tabFriends').className = "text-gray-400";
-            } else {
-                document.getElementById('friendsContent').classList.remove('hidden');
-                document.getElementById('feedContent').classList.add('hidden');
-                document.getElementById('tabFriends').className = "text-[#00e676] border-b-2 border-[#00e676] pb-1";
-                document.getElementById('tabFeed').className = "text-gray-400";
-            }
-        }
+    /* FEED & POSTS FUNCTIONALITY */
+    function handlePostImageSelect(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pendingPostImg = evt.target.result;
+          document.getElementById('postImagePreview').src = pendingPostImg;
+          document.getElementById('postImagePreviewContainer').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-        function createPost() {
-            const text = document.getElementById('postText').value.trim();
-            const image = document.getElementById('postImage').value.trim();
-            if (!text && !image) return;
+    function removePostImage() {
+      pendingPostImg = null;
+      document.getElementById('postImageInput').value = '';
+      document.getElementById('postImagePreviewContainer').classList.add('hidden');
+    }
 
-            const newPost = {
-                id: Date.now(),
-                author: currentUser.username,
-                text,
-                image,
-                likes: [],
-                comments: [],
-                shares: 0,
-                timestamp: new Date().toLocaleTimeString()
-            };
+    function publishPost() {
+      const text = document.getElementById('postInput').value.trim();
+      const isAnon = document.getElementById('anonToggle').checked;
 
-            posts.unshift(newPost);
-            localStorage.setItem('vortex_posts', JSON.stringify(posts));
-            document.getElementById('postText').value = '';
-            document.getElementById('postImage').value = '';
-            renderFeed();
-        }
+      if (!text && !pendingPostImg) {
+        showToast('Please add text or an image.');
+        return;
+      }
 
-        function renderFeed() {
-            const list = document.getElementById('postsList');
-            if (posts.length === 0) {
-                list.innerHTML = `<p class="text-center text-gray-500 text-sm py-4">No posts yet.</p>`;
-                return;
-            }
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      const newPost = {
+        id: 'post_' + Date.now(),
+        authorUsername: currentUser.username,
+        authorDisplayName: isAnon ? 'Anonymous Rider' : (currentUser.displayName || currentUser.username),
+        authorAvatar: isAnon ? 'https://placehold.co/150x150/1F2430/94A3B8?text=Anon' : (currentUser.avatar || DEFAULT_AVATAR),
+        content: text,
+        image: pendingPostImg,
+        likes: [],
+        comments: [],
+        isAnon: isAnon,
+        timestamp: Date.now()
+      };
 
-            list.innerHTML = posts.map(post => `
-                <div class="fb-card p-4 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-sm text-[#00e676]">@${post.author}</span>
-                        <span class="text-xs text-gray-400">${post.timestamp}</span>
-                    </div>
-                    ${post.text ? `<p class="text-sm">${post.text}</p>` : ''}
-                    ${post.image ? `<img src="${post.image}" class="w-full rounded max-h-80 object-cover">` : ''}
-                    
-                    <div class="flex justify-between text-xs text-gray-400 border-t border-gray-700 pt-2">
-                        <span>${post.likes.length} Likes</span>
-                        <span>${post.comments.length} Comments</span>
-                        <span>${post.shares} Shares</span>
-                    </div>
+      posts.unshift(newPost);
+      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
 
-                    <div class="flex border-t border-gray-700 pt-2 gap-2">
-                        <button onclick="likePost(${post.id})" class="flex-1 py-1 text-xs bg-gray-800 hover:bg-gray-700 rounded text-center">
-                            <i class="fa-solid fa-thumbs-up mr-1"></i> ${post.likes.includes(currentUser.username) ? 'Liked' : 'Like'}
-                        </button>
-                        <button onclick="sharePost(${post.id})" class="flex-1 py-1 text-xs bg-gray-800 hover:bg-gray-700 rounded text-center">
-                            <i class="fa-solid fa-share mr-1"></i> Share
-                        </button>
-                    </div>
+      // Reset form
+      document.getElementById('postInput').value = '';
+      removePostImage();
+      document.getElementById('anonToggle').checked = false;
 
-                    <!-- Comments Section -->
-                    <div class="space-y-2 pt-2 border-t border-gray-800">
-                        <div class="flex gap-2">
-                            <input type="text" id="commentInput_${post.id}" class="flex-1 p-1.5 rounded text-xs" placeholder="Write a comment...">
-                            <button onclick="addComment(${post.id})" class="px-3 py-1 btn-green rounded text-xs">Send</button>
-                        </div>
-                        <div class="space-y-1">
-                            ${post.comments.map(c => `<div class="text-xs bg-gray-900 p-1.5 rounded"><span class="font-bold text-[#00e676]">@${c.user}:</span>${c.text}</div>`).join('')}
-                        </div>
-                    </div>
+      showToast('Post published!');
+      renderFeed();
+    }
+
+    function renderFeed() {
+      const postsContainer = document.getElementById('postsFeed');
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+
+      if (posts.length === 0) {
+        postsContainer.innerHTML = `<div class="card-matte p-6 text-center text-slate-500 text-xs rounded-2xl">No posts available. Be the first to post!</div>`;
+        return;
+      }
+
+      postsContainer.innerHTML = posts.map(post => {
+        const hasLiked = post.likes.includes(currentUser ? currentUser.username : '');
+        const timeAgo = formatTimeAgo(post.timestamp);
+
+        return `
+          <div class="card-matte rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <img class="w-9 h-9 rounded-full object-cover border border-slate-700 bg-slate-800" src="${post.authorAvatar}" alt="Avatar">
+                <div>
+                  <div class="text-xs font-bold text-slate-100">${escapeHtml(post.authorDisplayName)} ${post.isAnon ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">Anon</span>' : ''}</div>
+                  <div class="text-[10px] text-slate-500">${post.isAnon ? '@anonymous' : '@' + post.authorUsername} • ${timeAgo}</div>
                 </div>
-            `).join('');
-        }
+              </div>
+            </div>
 
-        function likePost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (!post) return;
-            const index = post.likes.indexOf(currentUser.username);
-            if (index > -1) {
-                post.likes.splice(index, 1);
-            } else {
-                post.likes.push(currentUser.username);
-            }
-            localStorage.setItem('vortex_posts', JSON.stringify(posts));
-            renderFeed();
-        }
+            ${post.content ? `<p class="text-xs text-slate-200 leading-relaxed break-words">${escapeHtml(post.content)}</p>` : ''}
 
-        function addComment(postId) {
-            const input = document.getElementById(`commentInput_${postId}`);
-            const text = input.value.trim();
-            if (!text) return;
+            ${post.image ? `<img src="${post.image}" class="w-full max-h-80 object-cover rounded-xl border border-slate-800" alt="Post Image">` : ''}
 
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.comments.push({ user: currentUser.username, text });
-                localStorage.setItem('vortex_posts', JSON.stringify(posts));
-                input.value = '';
-                renderFeed();
-            }
-        }
+            <!-- POST ACTIONS -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs text-slate-400">
+              <button onclick="toggleLike('${post.id}')" class="flex items-center gap-1.5 hover:text-white transition ${hasLiked ? 'text-slate-100 font-bold' : ''}">
+                <i class="${hasLiked ? 'fa-solid' : 'fa-regular'} fa-heart ${hasLiked ? 'text-red-500' : ''}"></i>
+                <span>${post.likes.length}</span>
+              </button>
 
-        function sharePost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.shares += 1;
-                const sharedPost = {
-                    id: Date.now(),
-                    author: currentUser.username,
-                    text: `Shared from @${post.author}: "${post.text || ''}"`,
-                    image: post.image,
-                    likes: [],
-                    comments: [],
-                    shares: 0,
-                    timestamp: new Date().toLocaleTimeString()
-                };
-                posts.unshift(sharedPost);
-                localStorage.setItem('vortex_posts', JSON.stringify(posts));
-                renderFeed();
-                alert('Post shared to your timeline!');
-            }
-        }
+              <button onclick="toggleCommentBox('${post.id}')" class="flex items-center gap-1.5 hover:text-white transition">
+                <i class="fa-regular fa-comment"></i>
+                <span>${post.comments.length}</span>
+              </button>
 
-        function renderUsers() {
-            const list = document.getElementById('usersList');
-            const otherUsers = users.filter(u => u.username !== currentUser.username);
-            
-            if (otherUsers.length === 0) {
-                list.innerHTML = `<p class="text-xs text-gray-500">No other users registered yet.</p>`;
-                return;
-            }
+              <button onclick="sharePost('${post.id}')" class="flex items-center gap-1 hover:text-white transition">
+                <i class="fa-regular fa-share-from-square"></i>
+              </button>
+            </div>
 
-            list.innerHTML = otherUsers.map(u => {
-                const isFriend = currentUser.friends.includes(u.username);
-                return `
-                    <div class="flex justify-between items-center bg-gray-800 p-2 rounded">
-                        <span class="text-sm font-semibold">@${u.username}</span>
-                        <button onclick="toggleFriend('${u.username}')" class="px-3 py-1 text-xs rounded ${isFriend ? 'bg-red-600 text-white' : 'btn-green'}">
-                            ${isFriend ? 'Unfriend' : 'Add Friend'}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
+            <!-- COMMENT BOX SECTION -->
+            <div id="commentBox_${post.id}" class="hidden space-y-2 pt-2 border-t border-slate-800/60">
+              <div class="space-y-1.5 max-h-40 overflow-y-auto">
+                ${post.comments.map(c => `
+                  <div class="bg-[#0B0D11] p-2 rounded-xl text-xs">
+                    <span class="font-bold text-slate-300">@${escapeHtml(c.author)}:</span>
+                    <span class="text-slate-400">${escapeHtml(c.text)}</span>
+                  </div>
+                `).join('')}
+              </div>
 
-        function toggleFriend(username) {
-            const index = currentUser.friends.indexOf(username);
-            if (index > -1) {
-                currentUser.friends.splice(index, 1);
-            } else {
-                currentUser.friends.push(username);
-            }
-            users = users.map(u => u.username === currentUser.username ? currentUser : u);
-            localStorage.setItem('vortex_users', JSON.stringify(users));
-            localStorage.setItem('vortex_current', JSON.stringify(currentUser));
-            renderUsers();
-        }
+              <div class="flex gap-2">
+                <input type="text" id="commentInput_${post.id}" placeholder="Write a comment..." class="flex-1 bg-[#0B0D11] border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none">
+                <button onclick="submitComment('${post.id}')" class="btn-silver px-3 py-1.5 rounded-xl text-xs font-bold">Reply</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-        // Admin Modal Functions
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.remove('hidden');
-            document.getElementById('adminLoginBox').classList.remove('hidden');
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('adminPassInput').value = '';
-        }
+    function toggleLike(postId) {
+      if (!currentUser) return;
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
 
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-        }
+      const idx = post.likes.indexOf(currentUser.username);
+      if (idx > -1) {
+        post.likes.splice(idx, 1);
+      } else {
+        post.likes.push(currentUser.username);
+      }
 
-        function verifyAdmin() {
-            const pass = document.getElementById('adminPassInput').value.trim();
-            if (pass === ADMIN_SECRET) {
-                document.getElementById('adminLoginBox').classList.add('hidden');
-                document.getElementById('adminDashboard').classList.remove('hidden');
-                renderAdminPosts();
-            } else {
-                alert('Incorrect Admin Password!');
-            }
-        }
+      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
+      renderFeed();
+      if (document.getElementById('tab-profile').classList.contains('active')) {
+        renderProfile();
+      }
+    }
 
-        function renderAdminPosts() {
-            const list = document.getElementById('adminPostsList');
-            if (posts.length === 0) {
-                list.innerHTML = `<p class="text-xs text-gray-400">No posts available.</p>`;
-                return;
-            }
+    function toggleCommentBox(postId) {
+      const box = document.getElementById(`commentBox_${postId}`);
+      if (box) box.classList.toggle('hidden');
+    }
 
-            list.innerHTML = posts.map(post => `
-                <div class="bg-gray-800 p-3 rounded flex justify-between items-center">
-                    <div>
-                        <span class="text-xs font-bold text-[#00e676]">@${post.author}</span>
-                        <p class="text-xs text-gray-300 truncate max-w-xs">${post.text || '[Image Post]'}</p>
-                    </div>
-                    <button onclick="adminDeletePost(${post.id})" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded text-xs">
-                        Delete
-                    </button>
+    function submitComment(postId) {
+      if (!currentUser) return;
+      const input = document.getElementById(`commentInput_${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      post.comments.push({
+        author: currentUser.username,
+        text: text
+      });
+
+      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
+      input.value = '';
+      renderFeed();
+    }
+
+    function sharePost(postId) {
+      const dummyUrl = window.location.href;
+      copyToClipboard(dummyUrl);
+      showToast('Post link copied to clipboard!');
+    }
+
+    /* GROUPS SYSTEM (PUBLIC & PRIVATE) */
+    function openCreateGroupModal() {
+      document.getElementById('modalCreateGroup').classList.remove('hidden');
+    }
+
+    function closeCreateGroupModal() {
+      document.getElementById('modalCreateGroup').classList.add('hidden');
+      pendingGroupImg = null;
+    }
+
+    function toggleGroupPasscodeField() {
+      const type = document.getElementById('groupTypeSelect').value;
+      const passField = document.getElementById('passcodeFieldContainer');
+      if (type === 'private') {
+        passField.classList.remove('hidden');
+      } else {
+        passField.classList.add('hidden');
+      }
+    }
+
+    function previewGroupAvatar(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pendingGroupImg = evt.target.result;
+          document.getElementById('groupAvatarPreview').src = pendingGroupImg;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function submitCreateGroup() {
+      const name = document.getElementById('groupNameInput').value.trim();
+      const desc = document.getElementById('groupDescInput').value.trim();
+      const type = document.getElementById('groupTypeSelect').value;
+      const passcode = document.getElementById('groupPasscodeInput').value.trim();
+
+      if (!name) {
+        showToast('Please enter a group name.');
+        return;
+      }
+
+      if (type === 'private' && (passcode.length !== 4 || isNaN(passcode))) {
+        showToast('Private groups require a 4-digit numeric passcode.');
+        return;
+      }
+
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      const newGrp = {
+        id: 'grp_' + Date.now(),
+        name: name,
+        description: desc || 'No description provided.',
+        avatar: pendingGroupImg || 'https://placehold.co/150x150/1F2430/E2E8F0?text=Grp',
+        isPrivate: type === 'private',
+        passcode: type === 'private' ? passcode : '',
+        createdBy: currentUser.username,
+        members: [currentUser.username],
+        posts: []
+      };
+
+      groups.push(newGrp);
+      localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
+
+      closeCreateGroupModal();
+      showToast('Group created successfully!');
+      renderGroups();
+    }
+
+    function renderGroups() {
+      const list = document.getElementById('groupsList');
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+
+      if (groups.length === 0) {
+        list.innerHTML = `<div class="col-span-full card-matte p-6 text-center text-slate-500 text-xs rounded-2xl">No active groups found. Create one above!</div>`;
+        return;
+      }
+
+      list.innerHTML = groups.map(g => {
+        const isMember = g.members.includes(currentUser ? currentUser.username : '');
+
+        return `
+          <div class="card-matte rounded-2xl p-4 flex flex-col justify-between space-y-3">
+            <div class="flex items-start gap-3">
+              <img src="${g.avatar}" class="w-12 h-12 rounded-xl object-cover border border-slate-700 bg-slate-800" alt="Avatar">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-white">${escapeHtml(g.name)}</h3>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded ${g.isPrivate ? 'bg-amber-950/60 border border-amber-800 text-amber-300' : 'bg-slate-800 border border-slate-700 text-slate-300'}">
+                    ${g.isPrivate ? '<i class="fa-solid fa-lock text-[8px]"></i> Private' : 'Public'}
+                  </span>
                 </div>
-            `).join('');
-        }
+                <p class="text-xs text-slate-400 line-clamp-2 mt-1">${escapeHtml(g.description)}</p>
+              </div>
+            </div>
 
-        function adminDeletePost(postId) {
-            if (confirm('Are you sure you want to delete this post as Admin?')) {
-                posts = posts.filter(p => p.id !== postId);
-                localStorage.setItem('vortex_posts', JSON.stringify(posts));
-                renderAdminPosts();
-                renderFeed();
-            }
-        }
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+              <span class="text-[10px] text-slate-500"><i class="fa-solid fa-user-group mr-1"></i>${g.members.length} Members</span>
+              
+              <button onclick="openGroup('${g.id}')" class="btn-silver px-3 py-1.5 rounded-xl text-xs font-bold">
+                ${isMember ? 'Enter Group' : 'Join Group'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-        function changeLanguage() {
-            const lang = document.getElementById('langSwitch').value;
-            if (lang === 'si') {
-                alert('සිංහල භාෂාව තෝරාගන්නා ලදී.');
-            } else {
-                alert('English language selected.');
-            }
+    function openGroup(groupId) {
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      const grp = groups.find(g => g.id === groupId);
+      if (!grp) return;
+
+      const isMember = grp.members.includes(currentUser.username);
+
+      if (grp.isPrivate && !isMember) {
+        pendingJoinGroupId = groupId;
+        document.getElementById('modalPasscodePrompt').classList.remove('hidden');
+        return;
+      }
+
+      if (!isMember) {
+        grp.members.push(currentUser.username);
+        localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
+      }
+
+      activeGroupId = groupId;
+      document.getElementById('groupsList').classList.add('hidden');
+      document.getElementById('activeGroupContainer').classList.remove('hidden');
+
+      // Populate Group Header
+      document.getElementById('agAvatar').src = grp.avatar;
+      document.getElementById('agTitle').textContent = grp.name;
+      document.getElementById('agBadge').textContent = grp.isPrivate ? 'Private Circle' : 'Public Group';
+      document.getElementById('agDescription').textContent = grp.description;
+      document.getElementById('agMembersCount').innerHTML = `<i class="fa-solid fa-user-group mr-1"></i>${grp.members.length} Members`;
+      document.getElementById('agCreatedBy').innerHTML = `<i class="fa-solid fa-crown mr-1"></i>Admin: @${grp.createdBy}`;
+
+      renderGroupPosts();
+    }
+
+    function closeActiveGroup() {
+      activeGroupId = null;
+      document.getElementById('activeGroupContainer').classList.add('hidden');
+      document.getElementById('groupsList').classList.remove('hidden');
+      renderGroups();
+    }
+
+    function closePasscodePrompt() {
+      pendingJoinGroupId = null;
+      document.getElementById('joinPasscodeInput').value = '';
+      document.getElementById('modalPasscodePrompt').classList.add('hidden');
+    }
+
+    function submitPasscodeJoin() {
+      const passcodeEntered = document.getElementById('joinPasscodeInput').value.trim();
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      const grp = groups.find(g => g.id === pendingJoinGroupId);
+
+      if (!grp) return;
+
+      if (grp.passcode === passcodeEntered) {
+        grp.members.push(currentUser.username);
+        localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
+        closePasscodePrompt();
+        showToast('Passcode Verified! Joined Group.');
+        openGroup(grp.id);
+      } else {
+        showToast('Incorrect 4-Digit Passcode!');
+      }
+    }
+
+    function handleGroupPostImg(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pendingGroupPostImg = evt.target.result;
+          showToast('Image Attached for Group Post.');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function publishGroupPost() {
+      const text = document.getElementById('groupPostInput').value.trim();
+      if (!text && !pendingGroupPostImg) {
+        showToast('Please type a message or upload photo.');
+        return;
+      }
+
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      const grp = groups.find(g => g.id === activeGroupId);
+      if (!grp) return;
+
+      grp.posts.unshift({
+        id: 'gp_' + Date.now(),
+        authorUsername: currentUser.username,
+        authorDisplayName: currentUser.displayName || currentUser.username,
+        authorAvatar: currentUser.avatar || DEFAULT_AVATAR,
+        content: text,
+        image: pendingGroupPostImg,
+        timestamp: Date.now()
+      });
+
+      localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
+      document.getElementById('groupPostInput').value = '';
+      pendingGroupPostImg = null;
+      document.getElementById('groupPostImg').value = '';
+
+      showToast('Posted to Group Wall!');
+      renderGroupPosts();
+    }
+
+    function renderGroupPosts() {
+      const feed = document.getElementById('groupPostsFeed');
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      const grp = groups.find(g => g.id === activeGroupId);
+
+      if (!grp || grp.posts.length === 0) {
+        feed.innerHTML = `<div class="card-matte p-6 text-center text-slate-500 text-xs rounded-2xl">No posts in this group yet. Write something above!</div>`;
+        return;
+      }
+
+      feed.innerHTML = grp.posts.map(post => `
+        <div class="card-matte rounded-2xl p-4 space-y-2">
+          <div class="flex items-center gap-3">
+            <img class="w-8 h-8 rounded-full object-cover border border-slate-700 bg-slate-800" src="${post.authorAvatar}" alt="User">
+            <div>
+              <div class="text-xs font-bold text-white">${escapeHtml(post.authorDisplayName)}</div>
+              <div class="text-[10px] text-slate-500">@${post.authorUsername} • ${formatTimeAgo(post.timestamp)}</div>
+            </div>
+          </div>
+          ${post.content ? `<p class="text-xs text-slate-200 leading-relaxed">${escapeHtml(post.content)}</p>` : ''}
+          ${post.image ? `<img src="${post.image}" class="w-full max-h-72 object-cover rounded-xl border border-slate-800" alt="Group Post">` : ''}
+        </div>
+      `).join('');
+    }
+
+    /* DIRECT CHAT NO-NUMBER ROOM */
+    function startOrOpenChat() {
+      const target = document.getElementById('targetChatUsername').value.trim().toLowerCase();
+      if (!target) {
+        showToast('Please enter a @username');
+        return;
+      }
+      if (target === currentUser.username) {
+        showToast('You cannot chat with yourself.');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
+      const peerUser = users[target] || { username: target, displayName: `@${target}`, avatar: DEFAULT_AVATAR };
+
+      activeChatPeer = target;
+      document.getElementById('chatPeerName').textContent = peerUser.displayName || `@${peerUser.username}`;
+      document.getElementById('chatPeerAvatar').src = peerUser.avatar || DEFAULT_AVATAR;
+
+      document.getElementById('chatRoomBox').classList.remove('hidden');
+      renderChatMessages();
+    }
+
+    function closeChatRoom() {
+      activeChatPeer = null;
+      document.getElementById('chatRoomBox').classList.add('hidden');
+    }
+
+    function getChatSessionKey(userA, userB) {
+      return [userA, userB].sort().join('_CHAT_');
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatMessageInput');
+      const text = input.value.trim();
+      if (!text || !activeChatPeer) return;
+
+      const allMessages = JSON.parse(localStorage.getItem(STORAGE_MESSAGES)) || {};
+      const key = getChatSessionKey(currentUser.username, activeChatPeer);
+
+      if (!allMessages[key]) allMessages[key] = [];
+
+      allMessages[key].push({
+        sender: currentUser.username,
+        text: text,
+        timestamp: Date.now()
+      });
+
+      localStorage.setItem(STORAGE_MESSAGES, JSON.stringify(allMessages));
+      input.value = '';
+      renderChatMessages();
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessagesContainer');
+      if (!activeChatPeer) return;
+
+      const allMessages = JSON.parse(localStorage.getItem(STORAGE_MESSAGES)) || {};
+      const key = getChatSessionKey(currentUser.username, activeChatPeer);
+      const msgs = allMessages[key] || [];
+
+      if (msgs.length === 0) {
+        container.innerHTML = `<div class="text-center text-slate-500 text-xs py-8">No conversation history. Say Hi!</div>`;
+        return;
+      }
+
+      container.innerHTML = msgs.map(m => {
+        const isMe = m.sender === currentUser.username;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <div class="${isMe ? 'bg-slate-200 text-slate-950 font-medium' : 'bg-slate-800 text-slate-100 border border-slate-700'} max-w-[80%] rounded-2xl px-3 py-2 text-xs">
+              ${escapeHtml(m.text)}
+            </div>
+            <span class="text-[9px] text-slate-600 mt-0.5 px-1">${formatTimeAgo(m.timestamp)}</span>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    /* USER PROFILE & DIGITAL CERTIFICATE */
+    function renderProfile() {
+      if (!currentUser) return;
+
+      document.getElementById('profileDisplayAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
+      document.getElementById('profileDisplayName').textContent = currentUser.displayName || currentUser.username;
+      document.getElementById('profileHandle').textContent = `@${currentUser.username}`;
+      document.getElementById('profileBio').textContent = currentUser.bio || 'Decentralized Vortex network enthusiast.';
+
+      // Render My Posts
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      const myPosts = posts.filter(p => p.authorUsername === currentUser.username);
+      const feed = document.getElementById('myPostsFeed');
+
+      if (myPosts.length === 0) {
+        feed.innerHTML = `<div class="card-matte p-6 text-center text-slate-500 text-xs rounded-2xl">You haven't posted anything yet.</div>`;
+        return;
+      }
+
+      feed.innerHTML = myPosts.map(post => `
+        <div class="card-matte rounded-2xl p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] text-slate-500">${formatTimeAgo(post.timestamp)}</span>
+            <button onclick="deleteMyPost('${post.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          ${post.content ? `<p class="text-xs text-slate-200">${escapeHtml(post.content)}</p>` : ''}
+          ${post.image ? `<img src="${post.image}" class="w-full max-h-60 object-cover rounded-xl border border-slate-800" alt="Image">` : ''}
+        </div>
+      `).join('');
+    }
+
+    function deleteMyPost(postId) {
+      let posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      posts = posts.filter(p => p.id !== postId);
+      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
+      showToast('Post deleted.');
+      renderProfile();
+      renderFeed();
+    }
+
+    function openEditProfileModal() {
+      document.getElementById('editAvatarPreview').src = currentUser.avatar || DEFAULT_AVATAR;
+      document.getElementById('editDisplayNameInput').value = currentUser.displayName || '';
+      document.getElementById('editBioInput').value = currentUser.bio || '';
+      document.getElementById('modalEditProfile').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('modalEditProfile').classList.add('hidden');
+      pendingEditImg = null;
+    }
+
+    function previewEditAvatar(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          pendingEditImg = evt.target.result;
+          document.getElementById('editAvatarPreview').src = pendingEditImg;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function saveProfileChanges() {
+      const newName = document.getElementById('editDisplayNameInput').value.trim();
+      const newBio = document.getElementById('editBioInput').value.trim();
+
+      const users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
+      
+      if (users[currentUser.username]) {
+        users[currentUser.username].displayName = newName || currentUser.username;
+        users[currentUser.username].bio = newBio;
+        if (pendingEditImg) {
+          users[currentUser.username].avatar = pendingEditImg;
         }
-    </script>
+        
+        currentUser = users[currentUser.username];
+        localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+        localStorage.setItem(STORAGE_CURRENT, JSON.stringify(currentUser));
+      }
+
+      closeEditProfileModal();
+      checkAuthState();
+      showToast('Profile updated successfully!');
+    }
+
+    function generateProfileCertificate() {
+      document.getElementById('certAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
+      document.getElementById('certName').textContent = currentUser.displayName || currentUser.username;
+      document.getElementById('certHandle').textContent = `@${currentUser.username}`;
+      document.getElementById('certUid').textContent = 'VX-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('certDate').textContent = new Date().toLocaleDateString();
+
+      document.getElementById('modalCertificate').classList.remove('hidden');
+    }
+
+    function closeCertificateModal() {
+      document.getElementById('modalCertificate').classList.add('hidden');
+    }
+
+    /* ADMIN PANEL (PASSKEY UNLOCKABLE) */
+    function verifyAdminPasskey() {
+      const pass = document.getElementById('adminPasskeyInput').value.trim();
+      if (pass === MASTER_ADMIN_PASSKEY) {
+        document.getElementById('adminLock').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        showToast('Root Clearance Granted.');
+        renderAdminLists();
+      } else {
+        showToast('Access Denied: Invalid Passkey.');
+      }
+    }
+
+    function lockAdmin() {
+      document.getElementById('adminPasskeyInput').value = '';
+      document.getElementById('adminLock').classList.remove('hidden');
+      document.getElementById('adminDashboard').classList.add('hidden');
+    }
+
+    function renderAdminLists() {
+      // Moderate Posts
+      const postsList = document.getElementById('adminPostsList');
+      const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+
+      if (posts.length === 0) {
+        postsList.innerHTML = `<div class="text-xs text-slate-500 py-2">No posts available.</div>`;
+      } else {
+        postsList.innerHTML = posts.map(p => `
+          <div class="bg-[#0B0D11] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <div class="truncate max-w-[70%]">
+              <span class="font-bold text-slate-300">@${escapeHtml(p.authorUsername)}:</span>
+              <span class="text-slate-400 truncate">${escapeHtml(p.content || '[Image Post]')}</span>
+            </div>
+            <button onclick="adminDeletePost('${p.id}')" class="px-2 py-1 bg-red-950/60 border border-red-800 text-red-300 rounded text-[10px]">Delete</button>
+          </div>
+        `).join('');
+      }
+
+      // Moderate Groups
+      const groupsList = document.getElementById('adminGroupsList');
+      const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+
+      if (groups.length === 0) {
+        groupsList.innerHTML = `<div class="text-xs text-slate-500 py-2">No groups available.</div>`;
+      } else {
+        groupsList.innerHTML = groups.map(g => `
+          <div class="bg-[#0B0D11] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-slate-200">${escapeHtml(g.name)}</div>
+              <div class="text-[10px] text-slate-500">${g.isPrivate ? 'Private' : 'Public'} • Admin: @${g.createdBy}</div>
+            </div>
+            <button onclick="adminDeleteGroup('${g.id}')" class="px-2 py-1 bg-red-950/60 border border-red-800 text-red-300 rounded text-[10px]">Delete</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function adminDeletePost(postId) {
+      let posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      posts = posts.filter(p => p.id !== postId);
+      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
+      showToast('Post removed by Admin.');
+      renderAdminLists();
+      renderFeed();
+    }
+
+    function adminDeleteGroup(groupId) {
+      let groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
+      groups = groups.filter(g => g.id !== groupId);
+      localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
+      showToast('Group deleted by Admin.');
+      renderAdminLists();
+      renderGroups();
+    }
+
+    /* HELPER UTILITIES */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    function formatTimeAgo(timestamp) {
+      const seconds = Math.floor((Date.now() - timestamp) / 1000);
+      if (seconds < 60) return 'Just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+
+    function copyToClipboard(text) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+  </script>
 </body>
 </html>
+```
