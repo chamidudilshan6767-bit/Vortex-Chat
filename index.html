@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -91,7 +90,7 @@
         </div>
         <div>
           <h1 class="font-extrabold text-lg tracking-wider text-slate-100 flex items-center gap-2">
-            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v2.0</span>
+            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v3.0 Ultra</span>
           </h1>
         </div>
       </div>
@@ -113,17 +112,16 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-3xl mx-auto w-full flex-grow p-3 sm:p-4 mb-20">
 
-    <!-- AUTHENTICATION VIEW (MANDATORY REGISTRATION / LOGIN) -->
+    <!-- AUTHENTICATION VIEW -->
     <section id="authSection" class="py-8">
       <div class="card-matte rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center">
         <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 text-2xl">
-          <i class="fa-solid fa-[#000] fa-shield-halved"></i>
+          <i class="fa-solid fa-shield-halved"></i>
         </div>
         <h2 id="langAuthTitle" class="text-2xl font-bold text-white mb-1">Welcome to VORTEX</h2>
         <p id="langAuthSubtitle" class="text-xs text-slate-400 mb-6">Enter your handle and profile details to get started.</p>
 
         <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4 text-left">
-          <!-- Profile Pic Upload Pre-Login -->
           <div class="flex flex-col items-center justify-center gap-2 mb-2">
             <div class="relative group">
               <img id="authAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-slate-600 bg-slate-800" src="https://placehold.co/150x150/1F2430/E2E8F0?text=Avatar" alt="Profile Preview">
@@ -139,7 +137,7 @@
             <label id="langUsernameLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username (@handle)</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">@</span>
-              <input type="text" id="authUsername" required pattern="[a-zA-Z0-0_]{3,18}" title="3-18 characters, letters, numbers, underscores" placeholder="username" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 pl-8 pr-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
+              <input type="text" id="authUsername" required pattern="[a-zA-Z0-9_]{3,18}" title="3-18 characters, letters, numbers, underscores" placeholder="username" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 pl-8 pr-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
             </div>
           </div>
 
@@ -155,15 +153,15 @@
       </div>
     </section>
 
-    <!-- APP CONTENT (HIDDEN UNTIL AUTH) -->
+    <!-- APP CONTENT -->
     <div id="appContent" class="hidden">
 
       <!-- TAB 1: FEED -->
       <section id="tab-feed" class="tab-content active space-y-4">
         
-        <!-- CREATE POST BOX -->
-        <div class="card-matte rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
+        <!-- CREATE MULTI-MEDIA POST BOX -->
+        <div class="card-matte rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <img id="feedPostUserAvatar" class="w-9 h-9 rounded-full object-cover border border-slate-700" src="" alt="User">
               <div>
@@ -179,21 +177,33 @@
             </label>
           </div>
 
-          <textarea id="postInput" rows="3" placeholder="What's happening in the network?" class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
+          <textarea id="postInput" rows="3" placeholder="What's happening in the network? Add message or share a link..." class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
 
-          <!-- Image Preview -->
-          <div id="postImagePreviewContainer" class="hidden relative my-2">
-            <img id="postImagePreview" class="max-h-56 rounded-xl object-cover w-full border border-slate-700" src="" alt="Preview">
-            <button onclick="removePostImage()" class="absolute top-2 right-2 bg-slate-900/80 text-white rounded-full p-1.5 hover:bg-slate-800 border border-slate-600">
+          <!-- External Link Input -->
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs"><i class="fa-solid fa-link"></i></span>
+            <input type="url" id="postLinkInput" placeholder="Attach URL / Web link (optional)" class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl py-1.5 pl-8 pr-3 text-xs text-slate-300 focus:outline-none focus:border-slate-600">
+          </div>
+
+          <!-- Any File Attachment Preview Box -->
+          <div id="postFilePreviewContainer" class="hidden relative p-3 bg-slate-900/90 border border-slate-700 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-3 truncate pr-4">
+              <div id="postFileIcon" class="text-lg text-slate-300"><i class="fa-solid fa-file"></i></div>
+              <div class="truncate">
+                <div id="postFileName" class="text-xs font-bold text-white truncate">file.ext</div>
+                <div id="postFileType" class="text-[10px] text-slate-400">0 KB</div>
+              </div>
+            </div>
+            <button onclick="removePostFile()" class="bg-slate-800 text-white rounded-full p-1 hover:bg-slate-700 border border-slate-600 flex-shrink-0">
               <i class="fa-solid fa-xmark text-xs"></i>
             </button>
           </div>
 
-          <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800/80">
-            <label class="flex items-center gap-2 text-xs text-slate-400 hover:text-slate-200 cursor-pointer px-2 py-1 rounded hover:bg-slate-800/50 transition">
-              <i class="fa-solid fa-image text-slate-400"></i>
-              <span id="langAttachPhoto">Photo</span>
-              <input type="file" id="postImageInput" accept="image/*" class="hidden" onchange="handlePostImageSelect(event)">
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <label class="flex items-center gap-2 text-xs text-slate-400 hover:text-slate-200 cursor-pointer px-2.5 py-1.5 rounded-xl hover:bg-slate-800/50 border border-slate-800 transition">
+              <i class="fa-solid fa-paperclip text-slate-400"></i>
+              <span id="langAttachFile">Attach Any File (Video, Audio, APK, Doc)</span>
+              <input type="file" id="postFileInput" class="hidden" onchange="handlePostFileSelect(event)">
             </label>
 
             <button onclick="publishPost()" class="btn-silver px-5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5">
@@ -204,15 +214,11 @@
         </div>
 
         <!-- POSTS FEED CONTAINER -->
-        <div id="postsFeed" class="space-y-4">
-          <!-- Dynamic Posts Injection -->
-        </div>
+        <div id="postsFeed" class="space-y-4"></div>
       </section>
 
       <!-- TAB 2: GROUPS -->
       <section id="tab-groups" class="tab-content space-y-4">
-        
-        <!-- CREATE GROUP & LIST HEADER -->
         <div class="flex items-center justify-between">
           <h2 id="langGroupsTitle" class="text-lg font-bold text-slate-100 flex items-center gap-2">
             <i class="fa-solid fa-users text-slate-400"></i>
@@ -224,12 +230,9 @@
           </button>
         </div>
 
-        <!-- GROUPS LIST -->
-        <div id="groupsList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <!-- Dynamic Groups Injection -->
-        </div>
+        <div id="groupsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
 
-        <!-- ACTIVE GROUP VIEW (HIDDEN BY DEFAULT) -->
+        <!-- ACTIVE GROUP VIEW -->
         <div id="activeGroupContainer" class="hidden space-y-4">
           <button onclick="closeActiveGroup()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 mb-2">
             <i class="fa-solid fa-arrow-left"></i> <span id="langBackToGroups">Back to Groups</span>
@@ -250,22 +253,26 @@
             </div>
           </div>
 
-          <!-- GROUP POST BOX -->
-          <div class="card-matte rounded-2xl p-4">
+          <!-- GROUP POST BOX WITH FILES -->
+          <div class="card-matte rounded-2xl p-4 space-y-2">
             <textarea id="groupPostInput" rows="2" placeholder="Post something to group wall..." class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
+            
+            <div id="groupFilePreviewContainer" class="hidden relative p-2 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+              <span id="groupFileName" class="truncate text-slate-300">file.ext</span>
+              <button onclick="removeGroupFile()" class="text-red-400 ml-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
             <div class="flex items-center justify-between mt-2">
-              <label class="text-xs text-slate-400 hover:text-white cursor-pointer">
-                <i class="fa-solid fa-image"></i>
-                <input type="file" id="groupPostImg" accept="image/*" class="hidden" onchange="handleGroupPostImg(event)">
+              <label class="text-xs text-slate-400 hover:text-white cursor-pointer border border-slate-800 px-3 py-1.5 rounded-xl bg-slate-900">
+                <i class="fa-solid fa-paperclip mr-1"></i> Attach File
+                <input type="file" id="groupPostFile" class="hidden" onchange="handleGroupPostFileSelect(event)">
               </label>
               <button onclick="publishGroupPost()" class="btn-silver px-4 py-1.5 rounded-xl text-xs font-bold">Post to Group</button>
             </div>
           </div>
 
-          <!-- GROUP FEED -->
           <div id="groupPostsFeed" class="space-y-4"></div>
         </div>
-
       </section>
 
       <!-- TAB 3: DIRECT CHAT -->
@@ -288,8 +295,7 @@
         </div>
 
         <!-- CHAT BOX -->
-        <div id="chatRoomBox" class="hidden card-matte rounded-2xl p-4 flex flex-col h-[420px]">
-          <!-- Chat Header -->
+        <div id="chatRoomBox" class="hidden card-matte rounded-2xl p-4 flex flex-col h-[460px]">
           <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <img id="chatPeerAvatar" class="w-8 h-8 rounded-full object-cover border border-slate-700" src="" alt="Peer">
@@ -305,14 +311,20 @@
             </button>
           </div>
 
-          <!-- Chat Messages Area -->
-          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto py-3 space-y-2 pr-1">
-            <!-- Dynamic Messages -->
+          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto py-3 space-y-2 pr-1"></div>
+
+          <!-- Chat Attachment Preview -->
+          <div id="chatFilePreviewContainer" class="hidden relative p-2 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs mb-2">
+            <span id="chatFileName" class="truncate text-slate-300">file.ext</span>
+            <button onclick="removeChatFile()" class="text-red-400 ml-2"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
-          <!-- Chat Input Area -->
-          <div class="pt-2 border-t border-slate-800 flex gap-2">
-            <input type="text" id="chatMessageInput" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Type a message..." class="flex-1 bg-[#0B0D11] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-600">
+          <div class="pt-2 border-t border-slate-800 flex items-center gap-2">
+            <label class="text-slate-400 hover:text-white cursor-pointer px-2 py-1">
+              <i class="fa-solid fa-paperclip text-sm"></i>
+              <input type="file" id="chatFileInput" class="hidden" onchange="handleChatFileSelect(event)">
+            </label>
+            <input type="text" id="chatMessageInput" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Type a message or send file..." class="flex-1 bg-[#0B0D11] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-600">
             <button onclick="sendChatMessage()" class="btn-silver px-4 py-2 rounded-xl text-xs font-bold">
               <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -322,7 +334,6 @@
 
       <!-- TAB 4: USER PROFILE -->
       <section id="tab-profile" class="tab-content space-y-4">
-        <!-- USER CARD -->
         <div class="card-matte rounded-2xl p-6 text-center relative overflow-hidden">
           <div class="absolute top-3 right-3 flex gap-2">
             <button onclick="openEditProfileModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700">
@@ -350,7 +361,6 @@
           </div>
         </div>
 
-        <!-- USER POSTS -->
         <div>
           <h3 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">My Posts</h3>
           <div id="myPostsFeed" class="space-y-4"></div>
@@ -359,7 +369,6 @@
 
       <!-- TAB 5: ADMIN PANEL -->
       <section id="tab-admin" class="tab-content space-y-4">
-        <!-- ADMIN LOCK SCREEN -->
         <div id="adminLock" class="card-matte rounded-2xl p-6 text-center max-w-md mx-auto">
           <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 text-xl mx-auto mb-3">
             <i class="fa-solid fa-lock"></i>
@@ -372,7 +381,6 @@
           </div>
         </div>
 
-        <!-- ADMIN DASHBOARD (UNLOCKED) -->
         <div id="adminDashboard" class="hidden space-y-4">
           <div class="flex items-center justify-between card-matte p-4 rounded-2xl">
             <div>
@@ -384,15 +392,12 @@
             <button onclick="lockAdmin()" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs">Lock</button>
           </div>
 
-          <!-- ADMIN CONTROLS -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- ALL POSTS MODERATION -->
             <div class="card-matte p-4 rounded-2xl">
               <h3 class="text-xs font-bold text-slate-300 uppercase mb-3">Global Posts Moderation</h3>
               <div id="adminPostsList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
             </div>
 
-            <!-- ALL GROUPS MODERATION -->
             <div class="card-matte p-4 rounded-2xl">
               <h3 class="text-xs font-bold text-slate-300 uppercase mb-3">Global Groups Moderation</h3>
               <div id="adminGroupsList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
@@ -447,7 +452,6 @@
       </h3>
 
       <div class="space-y-3">
-        <!-- Group Avatar Upload -->
         <div class="flex items-center gap-3">
           <img id="groupAvatarPreview" class="w-12 h-12 rounded-xl object-cover border border-slate-700 bg-slate-800" src="https://placehold.co/100x100/1F2430/E2E8F0?text=Grp" alt="Group Avatar">
           <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 cursor-pointer">
@@ -498,7 +502,6 @@
       </h3>
 
       <div class="space-y-3">
-        <!-- Profile Avatar Change -->
         <div class="flex flex-col items-center gap-2">
           <img id="editAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-slate-600 bg-slate-800" src="" alt="Avatar">
           <label class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 cursor-pointer">
@@ -543,14 +546,13 @@
     </div>
   </div>
 
-  <!-- MODAL: DIGITAL CERTIFICATE GENERATOR PREVIEW -->
+  <!-- MODAL: DIGITAL CERTIFICATE -->
   <div id="modalCertificate" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="card-matte rounded-2xl max-w-lg w-full p-6 space-y-4 relative">
       <button onclick="closeCertificateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
         <i class="fa-solid fa-xmark"></i>
       </button>
       
-      <!-- CERTIFICATE CANVAS / CONTAINER -->
       <div id="certContainer" class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-slate-600 rounded-xl p-6 text-center space-y-3 relative overflow-hidden">
         <div class="text-[10px] tracking-widest uppercase text-slate-400">VORTEX CYBER NETWORK</div>
         <h2 class="text-xl font-black text-slate-100 tracking-wider">OFFICIAL PROFILE CERTIFICATE</h2>
@@ -586,27 +588,26 @@
 
   <!-- APPLICATION LOGIC -->
   <script>
-    /* LOCAL STORAGE DATA SCHEMAS & INITIALIZATION */
-    const STORAGE_USERS = 'vortex_users_v2';
-    const STORAGE_CURRENT = 'vortex_current_user_v2';
-    const STORAGE_POSTS = 'vortex_posts_v2';
-    const STORAGE_GROUPS = 'vortex_groups_v2';
-    const STORAGE_MESSAGES = 'vortex_messages_v2';
+    const STORAGE_USERS = 'vortex_users_v3';
+    const STORAGE_CURRENT = 'vortex_current_user_v3';
+    const STORAGE_POSTS = 'vortex_posts_v3';
+    const STORAGE_GROUPS = 'vortex_groups_v3';
+    const STORAGE_MESSAGES = 'vortex_messages_v3';
 
     const MASTER_ADMIN_PASSKEY = "#chAmidu_diLshan*600008*#";
 
     let currentUser = JSON.parse(localStorage.getItem(STORAGE_CURRENT)) || null;
-    let currentLang = 'en'; // 'en' or 'si'
-    let pendingPostImg = null;
+    let currentLang = 'en'; 
+    let pendingPostFile = null; // Object { name, type, size, data, category }
     let pendingAuthImg = null;
     let pendingGroupImg = null;
     let pendingEditImg = null;
-    let pendingGroupPostImg = null;
+    let pendingGroupFile = null;
+    let pendingChatFile = null;
     let activeGroupId = null;
     let pendingJoinGroupId = null;
     let activeChatPeer = null;
 
-    // Translations Object
     const i18n = {
       en: {
         authTitle: "Welcome to VORTEX",
@@ -617,7 +618,7 @@
         enterBtn: "ENTER VORTEX",
         publicFeed: "Public Cyber Wall",
         anonPost: "Anon Mode",
-        attachPhoto: "Photo",
+        attachFile: "Attach File (Video, Audio, APK, Doc)",
         publishBtn: "Publish",
         groupsTitle: "Groups Hub",
         createGrpBtn: "Create Group",
@@ -641,7 +642,7 @@
         enterBtn: "VORTEX වෙත පිවිසෙන්න",
         publicFeed: "පොදු Cyber Wall එක",
         anonPost: "රහස්‍ය (Anon) මාදිලිය",
-        attachPhoto: "ඡායාරූපය",
+        attachFile: "ඕනෑම ගොනුවක් අමුණන්න (Video, Audio, APK, File)",
         publishBtn: "පළ කරන්න",
         groupsTitle: "Group එකතු",
         createGrpBtn: "Group එකක් සාදන්න",
@@ -658,10 +659,8 @@
       }
     };
 
-    // Default Fallback Avatar SVG Data URL
     const DEFAULT_AVATAR = "https://placehold.co/150x150/1F2430/E2E8F0?text=User";
 
-    // App Startup Initialization
     window.addEventListener('DOMContentLoaded', () => {
       initSeedData();
       checkAuthState();
@@ -670,7 +669,6 @@
       applyLanguage();
     });
 
-    /* SEED INITIAL DATA IF EMPTY */
     function initSeedData() {
       if (!localStorage.getItem(STORAGE_POSTS)) {
         const seedPosts = [
@@ -679,11 +677,12 @@
             authorUsername: 'vortex_official',
             authorDisplayName: 'Vortex System',
             authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
-            content: 'Welcome to VORTEX Chat v2.0! No phone numbers needed. Enjoy clean dark mode, private/public groups, custom profile photos, and instant messaging.',
-            image: null,
+            content: 'Welcome to VORTEX Chat v3.0! Support for sharing links, audio, videos, APKs, documents, and messages. Posts remain permanently until deleted by the creator or Root Admin.',
+            link: 'https://netlify.com',
+            file: null,
             likes: ['vortex_official'],
             comments: [
-              { author: 'cyber_pioneer', text: 'Clean minimal dark theme looks great!' }
+              { author: 'cyber_pioneer', text: 'Awesome update with full file persistence!' }
             ],
             isAnon: false,
             timestamp: Date.now() - 3600000
@@ -697,30 +696,10 @@
           {
             id: 'grp_public_1',
             name: 'Cyber Underground',
-            description: 'Public channel for tech discussions, dark UI designs, and privacy news.',
+            description: 'Public channel for tech discussions, dark UI designs, files, and privacy news.',
             avatar: 'https://placehold.co/150x150/1F2430/E2E8F0?text=CU',
             isPrivate: false,
             passcode: '',
-            createdBy: 'vortex_official',
-            members: ['vortex_official'],
-            posts: [
-              {
-                id: 'gp_1',
-                authorUsername: 'vortex_official',
-                authorDisplayName: 'Vortex System',
-                authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
-                content: 'Welcome to the Cyber Underground public group wall!',
-                timestamp: Date.now() - 1800000
-              }
-            ]
-          },
-          {
-            id: 'grp_private_1',
-            name: 'Shadow Ops Vault',
-            description: 'Private encrypted circle. Enter 4-digit passcode to join.',
-            avatar: 'https://placehold.co/150x150/1F2430/94A3B8?text=SO',
-            isPrivate: true,
-            passcode: '1234',
             createdBy: 'vortex_official',
             members: ['vortex_official'],
             posts: []
@@ -734,7 +713,6 @@
       }
     }
 
-    /* AUTHENTICATION CONTROL */
     function checkAuthState() {
       if (currentUser) {
         document.getElementById('authSection').classList.add('hidden');
@@ -743,7 +721,6 @@
         document.getElementById('headerUserWidget').classList.remove('hidden');
         document.getElementById('headerUserWidget').classList.add('flex');
 
-        // Update header & post box user UI
         document.getElementById('headerAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
         document.getElementById('feedPostUserAvatar').src = currentUser.avatar || DEFAULT_AVATAR;
         document.getElementById('feedPostUserDisplay').textContent = currentUser.displayName || `@${currentUser.username}`;
@@ -778,7 +755,6 @@
 
       let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
       
-      // Save or fetch user
       if (!users[usernameInput]) {
         users[usernameInput] = {
           username: usernameInput,
@@ -788,13 +764,8 @@
           joinedAt: new Date().toLocaleDateString()
         };
       } else {
-        // If avatar changed during login
-        if (pendingAuthImg) {
-          users[usernameInput].avatar = pendingAuthImg;
-        }
-        if (displayNameInput) {
-          users[usernameInput].displayName = displayNameInput;
-        }
+        if (pendingAuthImg) users[usernameInput].avatar = pendingAuthImg;
+        if (displayNameInput) users[usernameInput].displayName = displayNameInput;
       }
 
       localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
@@ -812,13 +783,11 @@
       showToast('Logged out successfully.');
     }
 
-    /* NAVIGATION TABS SWITCHING */
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       const target = document.getElementById(`tab-${tabId}`);
       if (target) target.classList.add('active');
 
-      // Update Nav Button Active Styling
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-white');
         btn.classList.add('text-slate-400');
@@ -835,7 +804,6 @@
       if (tabId === 'admin') renderAdminLists();
     }
 
-    /* LANGUAGE SWITCHER */
     function toggleLanguage() {
       currentLang = currentLang === 'en' ? 'si' : 'en';
       applyLanguage();
@@ -851,7 +819,7 @@
       document.getElementById('langEnterVortex').textContent = lang.enterBtn;
       document.getElementById('langPublicFeed').textContent = lang.publicFeed;
       document.getElementById('langAnonPost').textContent = lang.anonPost;
-      document.getElementById('langAttachPhoto').textContent = lang.attachPhoto;
+      document.getElementById('langAttachFile').textContent = lang.attachFile;
       document.getElementById('langPublishBtn').textContent = lang.publishBtn;
       document.getElementById('langGroupsTitle').textContent = lang.groupsTitle;
       document.getElementById('langCreateGroupBtn').textContent = lang.createGrpBtn;
@@ -867,32 +835,50 @@
       document.getElementById('langNavAdmin').textContent = lang.navAdmin;
     }
 
-    /* FEED & POSTS FUNCTIONALITY */
-    function handlePostImageSelect(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          pendingPostImg = evt.target.result;
-          document.getElementById('postImagePreview').src = pendingPostImg;
-          document.getElementById('postImagePreviewContainer').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
+    /* MULTI-FILE HELPER FUNCTIONS */
+    function detectFileCategory(file) {
+      if (file.type.startsWith('image/')) return 'image';
+      if (file.type.startsWith('video/')) return 'video';
+      if (file.type.startsWith('audio/')) return 'audio';
+      if (file.name.endsWith('.apk')) return 'apk';
+      return 'document';
     }
 
-    function removePostImage() {
-      pendingPostImg = null;
-      document.getElementById('postImageInput').value = '';
-      document.getElementById('postImagePreviewContainer').classList.add('hidden');
+    function handlePostFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const cat = detectFileCategory(file);
+        pendingPostFile = {
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: (file.size / 1024).toFixed(1) + ' KB',
+          data: evt.target.result,
+          category: cat
+        };
+
+        document.getElementById('postFileName').textContent = file.name;
+        document.getElementById('postFileType').textContent = `${cat.toUpperCase()} • ${pendingPostFile.size}`;
+        document.getElementById('postFilePreviewContainer').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removePostFile() {
+      pendingPostFile = null;
+      document.getElementById('postFileInput').value = '';
+      document.getElementById('postFilePreviewContainer').classList.add('hidden');
     }
 
     function publishPost() {
       const text = document.getElementById('postInput').value.trim();
+      const link = document.getElementById('postLinkInput').value.trim();
       const isAnon = document.getElementById('anonToggle').checked;
 
-      if (!text && !pendingPostImg) {
-        showToast('Please add text or an image.');
+      if (!text && !link && !pendingPostFile) {
+        showToast('Please add text, link, or attach a file.');
         return;
       }
 
@@ -903,7 +889,8 @@
         authorDisplayName: isAnon ? 'Anonymous Rider' : (currentUser.displayName || currentUser.username),
         authorAvatar: isAnon ? 'https://placehold.co/150x150/1F2430/94A3B8?text=Anon' : (currentUser.avatar || DEFAULT_AVATAR),
         content: text,
-        image: pendingPostImg,
+        link: link,
+        file: pendingPostFile,
         likes: [],
         comments: [],
         isAnon: isAnon,
@@ -913,12 +900,12 @@
       posts.unshift(newPost);
       localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
 
-      // Reset form
       document.getElementById('postInput').value = '';
-      removePostImage();
+      document.getElementById('postLinkInput').value = '';
+      removePostFile();
       document.getElementById('anonToggle').checked = false;
 
-      showToast('Post published!');
+      showToast('Post published permanently!');
       renderFeed();
     }
 
@@ -933,7 +920,7 @@
 
       postsContainer.innerHTML = posts.map(post => {
         const hasLiked = post.likes.includes(currentUser ? currentUser.username : '');
-        const timeAgo = formatTimeAgo(post.timestamp);
+        const isOwner = currentUser && (currentUser.username === post.authorUsername);
 
         return `
           <div class="card-matte rounded-2xl p-4 space-y-3">
@@ -942,16 +929,28 @@
                 <img class="w-9 h-9 rounded-full object-cover border border-slate-700 bg-slate-800" src="${post.authorAvatar}" alt="Avatar">
                 <div>
                   <div class="text-xs font-bold text-slate-100">${escapeHtml(post.authorDisplayName)} ${post.isAnon ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">Anon</span>' : ''}</div>
-                  <div class="text-[10px] text-slate-500">${post.isAnon ? '@anonymous' : '@' + post.authorUsername} • ${timeAgo}</div>
+                  <div class="text-[10px] text-slate-500">${post.isAnon ? '@anonymous' : '@' + post.authorUsername} • ${formatTimeAgo(post.timestamp)}</div>
                 </div>
               </div>
+
+              ${isOwner ? `
+                <button onclick="deletePostByAuthor('${post.id}')" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-950/40 rounded-lg border border-red-900/50">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              ` : ''}
             </div>
 
             ${post.content ? `<p class="text-xs text-slate-200 leading-relaxed break-words">${escapeHtml(post.content)}</p>` : ''}
 
-            ${post.image ? `<img src="${post.image}" class="w-full max-h-80 object-cover rounded-xl border border-slate-800" alt="Post Image">` : ''}
+            ${post.link ? `
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs flex items-center justify-between">
+                <span class="text-slate-300 truncate mr-2"><i class="fa-solid fa-link mr-1.5 text-slate-500"></i>${escapeHtml(post.link)}</span>
+                <a href="${escapeHtml(post.link)}" target="_blank" class="btn-silver px-3 py-1 rounded-lg text-[10px] font-bold flex-shrink-0">Open Link</a>
+              </div>
+            ` : ''}
 
-            <!-- POST ACTIONS -->
+            ${renderFileElement(post.file)}
+
             <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs text-slate-400">
               <button onclick="toggleLike('${post.id}')" class="flex items-center gap-1.5 hover:text-white transition ${hasLiked ? 'text-slate-100 font-bold' : ''}">
                 <i class="${hasLiked ? 'fa-solid' : 'fa-regular'} fa-heart ${hasLiked ? 'text-red-500' : ''}"></i>
@@ -968,7 +967,6 @@
               </button>
             </div>
 
-            <!-- COMMENT BOX SECTION -->
             <div id="commentBox_${post.id}" class="hidden space-y-2 pt-2 border-t border-slate-800/60">
               <div class="space-y-1.5 max-h-40 overflow-y-auto">
                 ${post.comments.map(c => `
@@ -989,6 +987,52 @@
       }).join('');
     }
 
+    function renderFileElement(file) {
+      if (!file) return '';
+
+      if (file.category === 'image') {
+        return `<img src="${file.data}" class="w-full max-h-80 object-cover rounded-xl border border-slate-800" alt="Attachment">`;
+      }
+      if (file.category === 'video') {
+        return `<video src="${file.data}" controls class="w-full max-h-80 rounded-xl border border-slate-800 bg-black"></video>`;
+      }
+      if (file.category === 'audio') {
+        return `<audio src="${file.data}" controls class="w-full mt-1"></audio>`;
+      }
+
+      return `
+        <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3 truncate">
+            <i class="fa-solid ${file.category === 'apk' ? 'fa-android text-emerald-400' : 'fa-file-lines text-slate-400'} text-xl"></i>
+            <div class="truncate">
+              <div class="font-bold text-white truncate">${escapeHtml(file.name)}</div>
+              <div class="text-[10px] text-slate-500">${file.size}</div>
+            </div>
+          </div>
+          <a href="${file.data}" download="${file.name}" class="btn-silver px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">
+            <i class="fa-solid fa-download"></i> Download
+          </a>
+        </div>
+      `;
+    }
+
+    function deletePostByAuthor(postId) {
+      let posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
+      const post = posts.find(p => p.id === postId);
+
+      if (post && post.authorUsername === currentUser.username) {
+        posts = posts.filter(p => p.id !== postId);
+        localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
+        showToast('Post deleted by creator.');
+        renderFeed();
+        if (document.getElementById('tab-profile').classList.contains('active')) {
+          renderProfile();
+        }
+      } else {
+        showToast('Unauthorized! Only the post author or Root Admin can delete.');
+      }
+    }
+
     function toggleLike(postId) {
       if (!currentUser) return;
       const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
@@ -1004,9 +1048,6 @@
 
       localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
       renderFeed();
-      if (document.getElementById('tab-profile').classList.contains('active')) {
-        renderProfile();
-      }
     }
 
     function toggleCommentBox(postId) {
@@ -1035,12 +1076,22 @@
     }
 
     function sharePost(postId) {
-      const dummyUrl = window.location.href;
-      copyToClipboard(dummyUrl);
-      showToast('Post link copied to clipboard!');
+      const shareUrl = window.location.origin + window.location.pathname + '?post=' + postId;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Vortex Chat Post',
+          url: shareUrl
+        }).catch(() => {
+          copyToClipboard(shareUrl);
+          showToast('Link copied to clipboard!');
+        });
+      } else {
+        copyToClipboard(shareUrl);
+        showToast('Link copied to clipboard!');
+      }
     }
 
-    /* GROUPS SYSTEM (PUBLIC & PRIVATE) */
+    /* GROUPS WITH FILES */
     function openCreateGroupModal() {
       document.getElementById('modalCreateGroup').classList.remove('hidden');
     }
@@ -1170,7 +1221,6 @@
       document.getElementById('groupsList').classList.add('hidden');
       document.getElementById('activeGroupContainer').classList.remove('hidden');
 
-      // Populate Group Header
       document.getElementById('agAvatar').src = grp.avatar;
       document.getElementById('agTitle').textContent = grp.name;
       document.getElementById('agBadge').textContent = grp.isPrivate ? 'Private Circle' : 'Public Group';
@@ -1212,22 +1262,37 @@
       }
     }
 
-    function handleGroupPostImg(e) {
+    function handleGroupPostFileSelect(e) {
       const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          pendingGroupPostImg = evt.target.result;
-          showToast('Image Attached for Group Post.');
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const cat = detectFileCategory(file);
+        pendingGroupFile = {
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: (file.size / 1024).toFixed(1) + ' KB',
+          data: evt.target.result,
+          category: cat
         };
-        reader.readAsDataURL(file);
-      }
+
+        document.getElementById('groupFileName').textContent = file.name;
+        document.getElementById('groupFilePreviewContainer').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeGroupFile() {
+      pendingGroupFile = null;
+      document.getElementById('groupPostFile').value = '';
+      document.getElementById('groupFilePreviewContainer').classList.add('hidden');
     }
 
     function publishGroupPost() {
       const text = document.getElementById('groupPostInput').value.trim();
-      if (!text && !pendingGroupPostImg) {
-        showToast('Please type a message or upload photo.');
+      if (!text && !pendingGroupFile) {
+        showToast('Please type a message or attach a file.');
         return;
       }
 
@@ -1241,14 +1306,13 @@
         authorDisplayName: currentUser.displayName || currentUser.username,
         authorAvatar: currentUser.avatar || DEFAULT_AVATAR,
         content: text,
-        image: pendingGroupPostImg,
+        file: pendingGroupFile,
         timestamp: Date.now()
       });
 
       localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
       document.getElementById('groupPostInput').value = '';
-      pendingGroupPostImg = null;
-      document.getElementById('groupPostImg').value = '';
+      removeGroupFile();
 
       showToast('Posted to Group Wall!');
       renderGroupPosts();
@@ -1274,12 +1338,12 @@
             </div>
           </div>
           ${post.content ? `<p class="text-xs text-slate-200 leading-relaxed">${escapeHtml(post.content)}</p>` : ''}
-          ${post.image ? `<img src="${post.image}" class="w-full max-h-72 object-cover rounded-xl border border-slate-800" alt="Group Post">` : ''}
+          ${renderFileElement(post.file)}
         </div>
       `).join('');
     }
 
-    /* DIRECT CHAT NO-NUMBER ROOM */
+    /* DIRECT CHAT WITH FILE SHARING */
     function startOrOpenChat() {
       const target = document.getElementById('targetChatUsername').value.trim().toLowerCase();
       if (!target) {
@@ -1311,10 +1375,37 @@
       return [userA, userB].sort().join('_CHAT_');
     }
 
+    function handleChatFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const cat = detectFileCategory(file);
+        pendingChatFile = {
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: (file.size / 1024).toFixed(1) + ' KB',
+          data: evt.target.result,
+          category: cat
+        };
+
+        document.getElementById('chatFileName').textContent = file.name;
+        document.getElementById('chatFilePreviewContainer').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeChatFile() {
+      pendingChatFile = null;
+      document.getElementById('chatFileInput').value = '';
+      document.getElementById('chatFilePreviewContainer').classList.add('hidden');
+    }
+
     function sendChatMessage() {
       const input = document.getElementById('chatMessageInput');
       const text = input.value.trim();
-      if (!text || !activeChatPeer) return;
+      if ((!text && !pendingChatFile) || !activeChatPeer) return;
 
       const allMessages = JSON.parse(localStorage.getItem(STORAGE_MESSAGES)) || {};
       const key = getChatSessionKey(currentUser.username, activeChatPeer);
@@ -1324,11 +1415,13 @@
       allMessages[key].push({
         sender: currentUser.username,
         text: text,
+        file: pendingChatFile,
         timestamp: Date.now()
       });
 
       localStorage.setItem(STORAGE_MESSAGES, JSON.stringify(allMessages));
       input.value = '';
+      removeChatFile();
       renderChatMessages();
     }
 
@@ -1348,11 +1441,12 @@
       container.innerHTML = msgs.map(m => {
         const isMe = m.sender === currentUser.username;
         return `
-          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-            <div class="${isMe ? 'bg-slate-200 text-slate-950 font-medium' : 'bg-slate-800 text-slate-100 border border-slate-700'} max-w-[80%] rounded-2xl px-3 py-2 text-xs">
-              ${escapeHtml(m.text)}
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
+            <div class="${isMe ? 'bg-slate-200 text-slate-950 font-medium' : 'bg-slate-800 text-slate-100 border border-slate-700'} max-w-[80%] rounded-2xl px-3 py-2 text-xs space-y-1">
+              ${m.text ? `<div>${escapeHtml(m.text)}</div>` : ''}
+              ${renderFileElement(m.file)}
             </div>
-            <span class="text-[9px] text-slate-600 mt-0.5 px-1">${formatTimeAgo(m.timestamp)}</span>
+            <span class="text-[9px] text-slate-600 px-1">${formatTimeAgo(m.timestamp)}</span>
           </div>
         `;
       }).join('');
@@ -1369,7 +1463,6 @@
       document.getElementById('profileHandle').textContent = `@${currentUser.username}`;
       document.getElementById('profileBio').textContent = currentUser.bio || 'Decentralized Vortex network enthusiast.';
 
-      // Render My Posts
       const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
       const myPosts = posts.filter(p => p.authorUsername === currentUser.username);
       const feed = document.getElementById('myPostsFeed');
@@ -1383,21 +1476,12 @@
         <div class="card-matte rounded-2xl p-4 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-[10px] text-slate-500">${formatTimeAgo(post.timestamp)}</span>
-            <button onclick="deleteMyPost('${post.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="deletePostByAuthor('${post.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i> Delete</button>
           </div>
           ${post.content ? `<p class="text-xs text-slate-200">${escapeHtml(post.content)}</p>` : ''}
-          ${post.image ? `<img src="${post.image}" class="w-full max-h-60 object-cover rounded-xl border border-slate-800" alt="Image">` : ''}
+          ${renderFileElement(post.file)}
         </div>
       `).join('');
-    }
-
-    function deleteMyPost(postId) {
-      let posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
-      posts = posts.filter(p => p.id !== postId);
-      localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
-      showToast('Post deleted.');
-      renderProfile();
-      renderFeed();
     }
 
     function openEditProfileModal() {
@@ -1461,7 +1545,7 @@
       document.getElementById('modalCertificate').classList.add('hidden');
     }
 
-    /* ADMIN PANEL (PASSKEY UNLOCKABLE) */
+    /* ADMIN PANEL WITH PASSKEY */
     function verifyAdminPasskey() {
       const pass = document.getElementById('adminPasskeyInput').value.trim();
       if (pass === MASTER_ADMIN_PASSKEY) {
@@ -1481,7 +1565,6 @@
     }
 
     function renderAdminLists() {
-      // Moderate Posts
       const postsList = document.getElementById('adminPostsList');
       const posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
 
@@ -1492,14 +1575,13 @@
           <div class="bg-[#0B0D11] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
             <div class="truncate max-w-[70%]">
               <span class="font-bold text-slate-300">@${escapeHtml(p.authorUsername)}:</span>
-              <span class="text-slate-400 truncate">${escapeHtml(p.content || '[Image Post]')}</span>
+              <span class="text-slate-400 truncate">${escapeHtml(p.content || (p.file ? p.file.name : 'Media Post'))}</span>
             </div>
             <button onclick="adminDeletePost('${p.id}')" class="px-2 py-1 bg-red-950/60 border border-red-800 text-red-300 rounded text-[10px]">Delete</button>
           </div>
         `).join('');
       }
 
-      // Moderate Groups
       const groupsList = document.getElementById('adminGroupsList');
       const groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
 
@@ -1522,7 +1604,7 @@
       let posts = JSON.parse(localStorage.getItem(STORAGE_POSTS)) || [];
       posts = posts.filter(p => p.id !== postId);
       localStorage.setItem(STORAGE_POSTS, JSON.stringify(posts));
-      showToast('Post removed by Admin.');
+      showToast('Post removed by Root Admin.');
       renderAdminLists();
       renderFeed();
     }
@@ -1531,12 +1613,12 @@
       let groups = JSON.parse(localStorage.getItem(STORAGE_GROUPS)) || [];
       groups = groups.filter(g => g.id !== groupId);
       localStorage.setItem(STORAGE_GROUPS, JSON.stringify(groups));
-      showToast('Group deleted by Admin.');
+      showToast('Group deleted by Root Admin.');
       renderAdminLists();
       renderGroups();
     }
 
-    /* HELPER UTILITIES */
+    /* UTILITY FUNCTIONS */
     function showToast(msg) {
       const toast = document.getElementById('toast');
       document.getElementById('toastMessage').textContent = msg;
@@ -1577,4 +1659,3 @@
   </script>
 </body>
 </html>
-```
