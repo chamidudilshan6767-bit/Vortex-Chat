@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #121212; color: #e4e6eb; font-family: Arial, sans-serif; }
+        .fb-card { background-color: #242526; border: 1px solid #3a3b3c; border-radius: 8px; }
+        .btn-green { background-color: #00e676; color: #121212; font-weight: bold; }
+        .btn-green:hover { background-color: #00c853; }
+        input, textarea, select { background-color: #3a3b3c !important; color: #fff !important; border: 1px solid #4e4f50 !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="bg-[#242526] border-b border-[#3a3b3c] px-4 py-2 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold text-[#00e676]">Vortex Chat</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <select id="langSwitch" onchange="changeLanguage()" class="text-xs px-2 py-1 rounded">
+                <option value="si">සිංහල</option>
+                <option value="en">English</option>
+            </select>
+            <div id="navUserArea" class="hidden flex items-center gap-2 text-sm">
+                <span id="navUsername" class="font-semibold"></span>
+                <button onclick="logout()" class="text-xs bg-red-600 px-2 py-1 rounded text-white">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div id="appContainer" class="flex-1 max-w-4xl mx-auto w-full p-4">
+        
+        <!-- AUTH SECTION -->
+        <div id="authSection" class="max-w-md mx-auto mt-10 fb-card p-6 shadow-lg">
+            <h2 id="authTitle" class="text-xl font-bold mb-4 text-[#00e676] text-center">Login to Vortex Chat</h2>
+            
+            <div id="loginForm" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400">Username</label>
+                    <input type="text" id="loginUser" class="w-full p-2 rounded text-sm mt-1" placeholder="Enter username">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Password</label>
+                    <input type="password" id="loginPass" class="w-full p-2 rounded text-sm mt-1" placeholder="Enter password">
+                </div>
+                <button onclick="login()" class="w-full py-2 btn-green rounded text-sm">Login</button>
+                <p class="text-center text-xs mt-3">Don't have an account? <span onclick="toggleAuth(true)" class="text-[#00e676] cursor-pointer underline">Register</span></p>
+            </div>
+
+            <div id="regForm" class="space-y-4 hidden">
+                <div>
+                    <label class="text-xs text-gray-400">Choose Unique Username</label>
+                    <input type="text" id="regUser" class="w-full p-2 rounded text-sm mt-1" placeholder="Unique username">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Password</label>
+                    <input type="password" id="regPass" class="w-full p-2 rounded text-sm mt-1" placeholder="Password">
+                </div>
+                <button onclick="register()" class="w-full py-2 btn-green rounded text-sm">Register</button>
+                <p class="text-center text-xs mt-3">Already have an account? <span onclick="toggleAuth(false)" class="text-[#00e676] cursor-pointer underline">Login</span></p>
+            </div>
+        </div>
+
+        <!-- MAIN SOCIAL FEED SECTION -->
+        <div id="socialSection" class="hidden space-y-6">
+            
+            <!-- Navigation Tabs & Admin Link -->
+            <div class="flex justify-between items-center fb-card p-3">
+                <div class="flex gap-4 text-sm font-semibold">
+                    <button onclick="switchTab('feed')" id="tabFeed" class="text-[#00e676] border-b-2 border-[#00e676] pb-1">Feed</button>
+                    <button onclick="switchTab('friends')" id="tabFriends" class="text-gray-400">Friends</button>
+                </div>
+                <button onclick="openAdminModal()" class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded text-white">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin Panel
+                </button>
+            </div>
+
+            <!-- Feed Tab Content -->
+            <div id="feedContent" class="space-y-4">
+                <!-- Create Post Box -->
+                <div class="fb-card p-4 space-y-3">
+                    <textarea id="postText" rows="2" class="w-full p-2 rounded text-sm resize-none" placeholder="What's on your mind?"></textarea>
+                    <input type="text" id="postImage" class="w-full p-2 rounded text-sm" placeholder="Image URL (Optional)">
+                    <div class="flex justify-end">
+                        <button onclick="createPost()" class="px-4 py-1.5 btn-green rounded text-sm">Post</button>
+                    </div>
+                </div>
+
+                <!-- Posts List -->
+                <div id="postsList" class="space-y-4">
+                    <!-- Dynamic Posts -->
+                </div>
+            </div>
+
+            <!-- Friends Tab Content -->
+            <div id="friendsContent" class="hidden space-y-4">
+                <div class="fb-card p-4">
+                    <h3 class="font-bold text-sm mb-3 text-[#00e676]">Find People & Friends</h3>
+                    <div id="usersList" class="space-y-2">
+                        <!-- Dynamic Users List -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ADMIN MODAL -->
+    <div id="adminModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
+        <div class="fb-card p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                <h3 class="font-bold text-lg text-[#00e676]">Admin Control Panel</h3>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="adminLoginBox" class="space-y-3">
+                <p class="text-xs text-gray-400">Enter Admin Password to access controls:</p>
+                <input type="password" id="adminPassInput" class="w-full p-2 rounded text-sm" placeholder="Password">
+                <button onclick="verifyAdmin()" class="w-full py-2 btn-green rounded text-sm">Access Admin</button>
+            </div>
+
+            <div id="adminDashboard" class="hidden space-y-4">
+                <p class="text-xs text-emerald-400 font-semibold">✓ Admin Authenticated Successfully. You can delete any post below:</p>
+                <div id="adminPostsList" class="space-y-3">
+                    <!-- Admin Post Items with Delete Button -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Download Section on Homepage Footer -->
+    <footer class="text-center py-4 border-t border-gray-800 text-xs text-gray-500 mt-auto">
+        <p>Vortex Chat Platform © 2026. Normal Facebook Style UI.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // LocalStorage initialization
+        let users = JSON.parse(localStorage.getItem('vortex_users')) || [];
+        let posts = JSON.parse(localStorage.getItem('vortex_posts')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('vortex_current')) || null;
+
+        const ADMIN_SECRET = "#chAmidu_diLshan*600008*#";
+
+        // Initialize state
+        if (currentUser) {
+            showSocialApp();
+        }
+
+        function toggleAuth(isReg) {
+            if (isReg) {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('regForm').classList.remove('hidden');
+                document.getElementById('authTitle').innerText = "Register New Account";
+            } else {
+                document.getElementById('regForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('authTitle').innerText = "Login to Vortex Chat";
+            }
+        }
+
+        function register() {
+            const username = document.getElementById('regUser').value.trim();
+            const password = document.getElementById('regPass').value.trim();
+            if (!username || !password) { alert('Please fill all fields'); return; }
+
+            if (users.some(u => u.username === username)) {
+                alert('Username already taken! Choose another.');
+                return;
+            }
+
+            const newUser = { username, password, friends: [] };
+            users.push(newUser);
+            localStorage.setItem('vortex_users', JSON.stringify(users));
+            alert('Registration successful! Please login.');
+            toggleAuth(false);
+        }
+
+        function login() {
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+
+            const user = users.find(u => u.username === username && u.password === password);
+            if (!user) {
+                alert('Invalid username or password!');
+                return;
+            }
+
+            currentUser = user;
+            localStorage.setItem('vortex_current', JSON.stringify(currentUser));
+            showSocialApp();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('vortex_current');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('socialSection').classList.add('hidden');
+            document.getElementById('navUserArea').classList.add('hidden');
+        }
+
+        function showSocialApp() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('socialSection').classList.remove('hidden');
+            document.getElementById('navUserArea').classList.remove('hidden');
+            document.getElementById('navUsername').innerText = currentUser.username;
+            renderFeed();
+            renderUsers();
+        }
+
+        function switchTab(tab) {
+            if (tab === 'feed') {
+                document.getElementById('feedContent').classList.remove('hidden');
+                document.getElementById('friendsContent').classList.add('hidden');
+                document.getElementById('tabFeed').className = "text-[#00e676] border-b-2 border-[#00e676] pb-1";
+                document.getElementById('tabFriends').className = "text-gray-400";
+            } else {
+                document.getElementById('friendsContent').classList.remove('hidden');
+                document.getElementById('feedContent').classList.add('hidden');
+                document.getElementById('tabFriends').className = "text-[#00e676] border-b-2 border-[#00e676] pb-1";
+                document.getElementById('tabFeed').className = "text-gray-400";
+            }
+        }
+
+        function createPost() {
+            const text = document.getElementById('postText').value.trim();
+            const image = document.getElementById('postImage').value.trim();
+            if (!text && !image) return;
+
+            const newPost = {
+                id: Date.now(),
+                author: currentUser.username,
+                text,
+                image,
+                likes: [],
+                comments: [],
+                shares: 0,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            posts.unshift(newPost);
+            localStorage.setItem('vortex_posts', JSON.stringify(posts));
+            document.getElementById('postText').value = '';
+            document.getElementById('postImage').value = '';
+            renderFeed();
+        }
+
+        function renderFeed() {
+            const list = document.getElementById('postsList');
+            if (posts.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 text-sm py-4">No posts yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = posts.map(post => `
+                <div class="fb-card p-4 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-sm text-[#00e676]">@${post.author}</span>
+                        <span class="text-xs text-gray-400">${post.timestamp}</span>
+                    </div>
+                    ${post.text ? `<p class="text-sm">${post.text}</p>` : ''}
+                    ${post.image ? `<img src="${post.image}" class="w-full rounded max-h-80 object-cover">` : ''}
+                    
+                    <div class="flex justify-between text-xs text-gray-400 border-t border-gray-700 pt-2">
+                        <span>${post.likes.length} Likes</span>
+                        <span>${post.comments.length} Comments</span>
+                        <span>${post.shares} Shares</span>
+                    </div>
+
+                    <div class="flex border-t border-gray-700 pt-2 gap-2">
+                        <button onclick="likePost(${post.id})" class="flex-1 py-1 text-xs bg-gray-800 hover:bg-gray-700 rounded text-center">
+                            <i class="fa-solid fa-thumbs-up mr-1"></i> ${post.likes.includes(currentUser.username) ? 'Liked' : 'Like'}
+                        </button>
+                        <button onclick="sharePost(${post.id})" class="flex-1 py-1 text-xs bg-gray-800 hover:bg-gray-700 rounded text-center">
+                            <i class="fa-solid fa-share mr-1"></i> Share
+                        </button>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="space-y-2 pt-2 border-t border-gray-800">
+                        <div class="flex gap-2">
+                            <input type="text" id="commentInput_${post.id}" class="flex-1 p-1.5 rounded text-xs" placeholder="Write a comment...">
+                            <button onclick="addComment(${post.id})" class="px-3 py-1 btn-green rounded text-xs">Send</button>
+                        </div>
+                        <div class="space-y-1">
+                            ${post.comments.map(c => `<div class="text-xs bg-gray-900 p-1.5 rounded"><span class="font-bold text-[#00e676]">@${c.user}:</span>${c.text}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function likePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            const index = post.likes.indexOf(currentUser.username);
+            if (index > -1) {
+                post.likes.splice(index, 1);
+            } else {
+                post.likes.push(currentUser.username);
+            }
+            localStorage.setItem('vortex_posts', JSON.stringify(posts));
+            renderFeed();
+        }
+
+        function addComment(postId) {
+            const input = document.getElementById(`commentInput_${postId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.comments.push({ user: currentUser.username, text });
+                localStorage.setItem('vortex_posts', JSON.stringify(posts));
+                input.value = '';
+                renderFeed();
+            }
+        }
+
+        function sharePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.shares += 1;
+                const sharedPost = {
+                    id: Date.now(),
+                    author: currentUser.username,
+                    text: `Shared from @${post.author}: "${post.text || ''}"`,
+                    image: post.image,
+                    likes: [],
+                    comments: [],
+                    shares: 0,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                posts.unshift(sharedPost);
+                localStorage.setItem('vortex_posts', JSON.stringify(posts));
+                renderFeed();
+                alert('Post shared to your timeline!');
+            }
+        }
+
+        function renderUsers() {
+            const list = document.getElementById('usersList');
+            const otherUsers = users.filter(u => u.username !== currentUser.username);
+            
+            if (otherUsers.length === 0) {
+                list.innerHTML = `<p class="text-xs text-gray-500">No other users registered yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = otherUsers.map(u => {
+                const isFriend = currentUser.friends.includes(u.username);
+                return `
+                    <div class="flex justify-between items-center bg-gray-800 p-2 rounded">
+                        <span class="text-sm font-semibold">@${u.username}</span>
+                        <button onclick="toggleFriend('${u.username}')" class="px-3 py-1 text-xs rounded ${isFriend ? 'bg-red-600 text-white' : 'btn-green'}">
+                            ${isFriend ? 'Unfriend' : 'Add Friend'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFriend(username) {
+            const index = currentUser.friends.indexOf(username);
+            if (index > -1) {
+                currentUser.friends.splice(index, 1);
+            } else {
+                currentUser.friends.push(username);
+            }
+            users = users.map(u => u.username === currentUser.username ? currentUser : u);
+            localStorage.setItem('vortex_users', JSON.stringify(users));
+            localStorage.setItem('vortex_current', JSON.stringify(currentUser));
+            renderUsers();
+        }
+
+        // Admin Modal Functions
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminLoginBox').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('adminPassInput').value = '';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function verifyAdmin() {
+            const pass = document.getElementById('adminPassInput').value.trim();
+            if (pass === ADMIN_SECRET) {
+                document.getElementById('adminLoginBox').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                renderAdminPosts();
+            } else {
+                alert('Incorrect Admin Password!');
+            }
+        }
+
+        function renderAdminPosts() {
+            const list = document.getElementById('adminPostsList');
+            if (posts.length === 0) {
+                list.innerHTML = `<p class="text-xs text-gray-400">No posts available.</p>`;
+                return;
+            }
+
+            list.innerHTML = posts.map(post => `
+                <div class="bg-gray-800 p-3 rounded flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-[#00e676]">@${post.author}</span>
+                        <p class="text-xs text-gray-300 truncate max-w-xs">${post.text || '[Image Post]'}</p>
+                    </div>
+                    <button onclick="adminDeletePost(${post.id})" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded text-xs">
+                        Delete
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function adminDeletePost(postId) {
+            if (confirm('Are you sure you want to delete this post as Admin?')) {
+                posts = posts.filter(p => p.id !== postId);
+                localStorage.setItem('vortex_posts', JSON.stringify(posts));
+                renderAdminPosts();
+                renderFeed();
+            }
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('langSwitch').value;
+            if (lang === 'si') {
+                alert('සිංහල භාෂාව තෝරාගන්නා ලදී.');
+            } else {
+                alert('English language selected.');
+            }
+        }
+    </script>
+</body>
+</html>
