@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VORTEX CHAT</title>
 
-  <!-- PWA & Mobile App Icon Integration -->
+  <!-- PWA Theme Color -->
+  <meta name="theme-color" content="#0B0D11">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VORTEX CHAT">
+
+  <!-- Dynamic Inline Web App Manifest (PWA App Installation) -->
+  <link rel="manifest" id="pwaManifest">
+
+  <!-- Icons -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230B0D11'/><rect x='16' y='16' width='480' height='480' rx='112' fill='none' stroke='%233D465C' stroke-width='16'/><path d='M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z' fill='%23E2E8F0'/><path d='M180 140 L256 310 L332 140' fill='none' stroke='%233B82F6' stroke-width='12' stroke-linecap='round'/></svg>">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230B0D11'/><path d='M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z' fill='%23E2E8F0'/></svg>">
-  <meta name="theme-color" content="#0B0D11">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,15 +37,15 @@
           },
           colors: {
             vortex: {
-              900: '#0B0D11', // Main BG
-              800: '#141821', // Card BG
-              700: '#1F2430', // Elevated / Border
-              600: '#2A3142', // Input / Hover
-              500: '#3D465C', // Subtitle text
-              300: '#94A3B8', // Muted text
-              100: '#E2E8F0', // Bright text
-              accent: '#3B82F6', // Crisp subtle accent (Slate Blue)
-              silver: '#E2E8F0', // Glossy silver accent
+              900: '#0B0D11',
+              800: '#141821',
+              700: '#1F2430',
+              600: '#2A3142',
+              500: '#3D465C',
+              300: '#94A3B8',
+              100: '#E2E8F0',
+              accent: '#3B82F6',
+              silver: '#E2E8F0',
             }
           }
         }
@@ -46,29 +54,12 @@
   </script>
 
   <style>
-    /* Custom Scrollbar for sleek Dark UI */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0B0D11;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #2A3142;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #3D465C;
-    }
-    /* Smooth transitions */
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    /* Glossy Silver Button Style */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B0D11; }
+    ::-webkit-scrollbar-thumb { background: #2A3142; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3D465C; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
     .btn-silver {
       background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
       color: #0f172a;
@@ -91,8 +82,7 @@
   <header class="sticky top-0 z-40 bg-[#0B0D11]/90 backdrop-blur-md border-b border-[#1F2430] px-4 py-3">
     <div class="max-w-3xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- VORTEX CYBER EMBLEM LOGO -->
-        <div class="w-10 h-10 rounded-xl bg-[#141821] border border-slate-700 flex items-center justify-center shadow-lg relative overflow-hidden group">
+        <div class="w-10 h-10 rounded-xl bg-[#141821] border border-slate-700 flex items-center justify-center shadow-lg relative overflow-hidden">
           <svg class="w-7 h-7" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z" fill="#E2E8F0"/>
             <path d="M180 140 L256 310 L332 140" stroke="#3B82F6" stroke-width="16" stroke-linecap="round"/>
@@ -100,13 +90,18 @@
         </div>
         <div>
           <h1 class="font-extrabold text-lg tracking-wider text-slate-100 flex items-center gap-2">
-            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v3.5 Safe</span>
+            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v3.5 PWA</span>
           </h1>
         </div>
       </div>
 
-      <!-- Header Controls: Lang Toggle & User Quick Avatar -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <!-- APP DOWNLOAD BUTTON (WILL TRIGGER INSTALL) -->
+        <button id="pwaInstallBtn" onclick="triggerPwaInstall()" class="hidden px-3 py-1.5 rounded-lg btn-silver text-xs font-bold flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-download"></i>
+          <span>INSTALL APP</span>
+        </button>
+
         <button id="langToggleBtn" onclick="toggleLanguage()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium border border-slate-700 text-slate-300 transition flex items-center gap-1.5">
           <i class="fa-solid fa-globe text-slate-400"></i>
           <span id="langText">EN / SI</span>
@@ -119,13 +114,25 @@
     </div>
   </header>
 
+  <!-- APP INSTALL PROMPT BANNER (IF SUPPORTED) -->
+  <div id="pwaBanner" class="hidden bg-slate-800/90 border-b border-slate-700 px-4 py-2.5 backdrop-blur">
+    <div class="max-w-3xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2 text-xs">
+        <i class="fa-solid fa-mobile-screen text-slate-300 text-sm"></i>
+        <span>Install <b>VORTEX Chat App</b> on your phone for full screen experience.</span>
+      </div>
+      <button onclick="triggerPwaInstall()" class="btn-silver px-3 py-1 rounded-lg text-xs font-bold flex-shrink-0">
+        INSTALL NOW
+      </button>
+    </div>
+  </div>
+
   <!-- MAIN CONTAINER -->
   <main class="max-w-3xl mx-auto w-full flex-grow p-3 sm:p-4 mb-20">
 
-    <!-- AUTHENTICATION VIEW (WITH PASSWORD SUPPORT) -->
+    <!-- AUTHENTICATION VIEW -->
     <section id="authSection" class="py-8">
       <div class="card-matte rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center">
-        <!-- AUTH LOGO EMBLEM -->
         <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-[#0B0D11] border border-slate-700 flex items-center justify-center shadow-xl">
           <svg class="w-14 h-14" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z" fill="#E2E8F0"/>
@@ -177,11 +184,8 @@
 
     <!-- APP CONTENT -->
     <div id="appContent" class="hidden">
-
       <!-- TAB 1: FEED -->
       <section id="tab-feed" class="tab-content active space-y-4">
-        
-        <!-- CREATE MULTI-MEDIA POST BOX -->
         <div class="card-matte rounded-2xl p-4 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -192,7 +196,6 @@
               </div>
             </div>
 
-            <!-- Anonymous Toggle -->
             <label class="flex items-center gap-2 cursor-pointer bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-slate-300">
               <input type="checkbox" id="anonToggle" class="rounded bg-slate-800 border-slate-700 text-slate-300 focus:ring-0">
               <span id="langAnonPost">Anon Mode</span>
@@ -201,13 +204,11 @@
 
           <textarea id="postInput" rows="3" placeholder="What's happening in the network? Add message or share a link..." class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
 
-          <!-- External Link Input -->
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs"><i class="fa-solid fa-link"></i></span>
             <input type="url" id="postLinkInput" placeholder="Attach URL / Web link (optional)" class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl py-1.5 pl-8 pr-3 text-xs text-slate-300 focus:outline-none focus:border-slate-600">
           </div>
 
-          <!-- Any File Attachment Preview Box -->
           <div id="postFilePreviewContainer" class="hidden relative p-3 bg-slate-900/90 border border-slate-700 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-3 truncate pr-4">
               <div id="postFileIcon" class="text-lg text-slate-300"><i class="fa-solid fa-file"></i></div>
@@ -235,7 +236,6 @@
           </div>
         </div>
 
-        <!-- POSTS FEED CONTAINER -->
         <div id="postsFeed" class="space-y-4"></div>
       </section>
 
@@ -254,7 +254,6 @@
 
         <div id="groupsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
 
-        <!-- ACTIVE GROUP VIEW -->
         <div id="activeGroupContainer" class="hidden space-y-4">
           <button onclick="closeActiveGroup()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 mb-2">
             <i class="fa-solid fa-arrow-left"></i> <span id="langBackToGroups">Back to Groups</span>
@@ -275,7 +274,6 @@
             </div>
           </div>
 
-          <!-- GROUP POST BOX WITH FILES -->
           <div class="card-matte rounded-2xl p-4 space-y-2">
             <textarea id="groupPostInput" rows="2" placeholder="Post something to group wall..." class="w-full bg-[#0B0D11] border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 transition resize-none"></textarea>
             
@@ -316,7 +314,6 @@
           </div>
         </div>
 
-        <!-- CHAT BOX -->
         <div id="chatRoomBox" class="hidden card-matte rounded-2xl p-4 flex flex-col h-[460px]">
           <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -335,7 +332,6 @@
 
           <div id="chatMessagesContainer" class="flex-1 overflow-y-auto py-3 space-y-2 pr-1"></div>
 
-          <!-- Chat Attachment Preview -->
           <div id="chatFilePreviewContainer" class="hidden relative p-2 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs mb-2">
             <span id="chatFileName" class="truncate text-slate-300">file.ext</span>
             <button onclick="removeChatFile()" class="text-red-400 ml-2"><i class="fa-solid fa-xmark"></i></button>
@@ -608,8 +604,66 @@
     <span id="toastMessage">Notification</span>
   </div>
 
-  <!-- APPLICATION LOGIC -->
+  <!-- APPLICATION SCRIPT & PWA SERVICE WORKER -->
   <script>
+    /* PWA INLINE MANIFEST CREATION */
+    const manifestObj = {
+      name: "VORTEX CHAT",
+      short_name: "VORTEX",
+      description: "Decentralized Cyber Social Network & File Sharing App",
+      start_url: "./",
+      display: "standalone",
+      background_color: "#0B0D11",
+      theme_color: "#0B0D11",
+      icons: [
+        {
+          src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230B0D11'/><path d='M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z' fill='%23E2E8F0'/></svg>",
+          sizes: "192x192 512x512",
+          type: "image/svg+xml"
+        }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestObj)], {type: 'application/json'});
+    document.getElementById('pwaManifest').href = URL.createObjectURL(manifestBlob);
+
+    /* PWA INSTALLATION PROMPT HANDLER */
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('pwaInstallBtn').classList.remove('hidden');
+      document.getElementById('pwaBanner').classList.remove('hidden');
+    });
+
+    function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast('Installing Vortex Chat App...');
+          }
+          deferredPrompt = null;
+          document.getElementById('pwaInstallBtn').classList.add('hidden');
+          document.getElementById('pwaBanner').classList.add('hidden');
+        });
+      } else {
+        alert("To install Vortex Chat: Tap the 3 dots (⋮) in Chrome menu and click 'Add to Home Screen' or 'Install App'.");
+      }
+    }
+
+    /* INLINE SERVICE WORKER REGISTER FOR PWA ELIGIBILITY */
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('activate', e => self.clients.claim());
+        self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+      `;
+      const blob = new Blob([swCode], {type: 'text/javascript'});
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(()=>{});
+    }
+
+    /* APP CORE VARIABLES & LOCAL STORAGE */
     const STORAGE_USERS = 'vortex_users_v3_5';
     const STORAGE_CURRENT = 'vortex_current_user_v3_5';
     const STORAGE_POSTS = 'vortex_posts_v3_5';
@@ -695,38 +749,34 @@
 
     function initSeedData() {
       if (!localStorage.getItem(STORAGE_POSTS)) {
-        const seedPosts = [
-          {
-            id: 'post_1',
-            authorUsername: 'vortex_official',
-            authorDisplayName: 'Vortex System',
-            authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
-            content: 'Welcome to VORTEX Chat v3.5! Powered by custom Cyber Emblem Branding and Password Protection.',
-            link: 'https://netlify.com',
-            file: null,
-            likes: ['vortex_official'],
-            comments: [],
-            isAnon: false,
-            timestamp: Date.now() - 3600000
-          }
-        ];
+        const seedPosts = [{
+          id: 'post_1',
+          authorUsername: 'vortex_official',
+          authorDisplayName: 'Vortex System',
+          authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
+          content: 'Welcome to VORTEX Chat v3.5! Powered by PWA Support - Click INSTALL APP at top to install on mobile device.',
+          link: 'https://netlify.com',
+          file: null,
+          likes: ['vortex_official'],
+          comments: [],
+          isAnon: false,
+          timestamp: Date.now() - 3600000
+        }];
         localStorage.setItem(STORAGE_POSTS, JSON.stringify(seedPosts));
       }
 
       if (!localStorage.getItem(STORAGE_GROUPS)) {
-        const seedGroups = [
-          {
-            id: 'grp_public_1',
-            name: 'Cyber Underground',
-            description: 'Public channel for tech discussions, dark UI designs, files, and privacy news.',
-            avatar: 'https://placehold.co/150x150/1F2430/E2E8F0?text=CU',
-            isPrivate: false,
-            passcode: '',
-            createdBy: 'vortex_official',
-            members: ['vortex_official'],
-            posts: []
-          }
-        ];
+        const seedGroups = [{
+          id: 'grp_public_1',
+          name: 'Cyber Underground',
+          description: 'Public channel for tech discussions, dark UI designs, files, and privacy news.',
+          avatar: 'https://placehold.co/150x150/1F2430/E2E8F0?text=CU',
+          isPrivate: false,
+          passcode: '',
+          createdBy: 'vortex_official',
+          members: ['vortex_official'],
+          posts: []
+        }];
         localStorage.setItem(STORAGE_GROUPS, JSON.stringify(seedGroups));
       }
 
