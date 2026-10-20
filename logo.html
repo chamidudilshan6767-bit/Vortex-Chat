@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VORTEX 1024x1024 Round Logo Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+
+  <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-2xl">
+    <h2 class="text-xl font-bold tracking-wide">VORTEX Round App Icon</h2>
+    <p class="text-xs text-slate-400">ඔබ එවූ Logo එක Median.co සඳහා 1024x1024 රවුම් PNG එකක් ලෙස මෙතැනින් Download කරගන්න.</p>
+
+    <!-- Canvas Preview Box -->
+    <div class="flex justify-center my-4">
+      <canvas id="iconCanvas" width="1024" height="1024" class="w-64 h-64 rounded-full border-2 border-slate-700 shadow-lg bg-black"></canvas>
+    </div>
+
+    <!-- Download Button -->
+    <button onclick="downloadPng()" class="w-full bg-slate-200 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm hover:bg-white transition flex items-center justify-center gap-2 shadow-lg">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+      DOWNLOAD 1024x1024 ROUND PNG
+    </button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('iconCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 1. Load User Image
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    
+    // Convert supplied image to Canvas
+    img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"><rect width="1024" height="1024" fill="%230F0F0F"/></svg>'; // Fallback base
+
+    // Draw custom Vortex Emblem directly onto Canvas
+    function renderVortexRoundLogo() {
+      const size = 1024;
+      const center = size / 2;
+      const radius = size / 2;
+
+      // Clear Canvas
+      ctx.clearRect(0, 0, size, size);
+
+      // Create Circular Clipping Path
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(center, center, radius - 12, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.clip();
+
+      // Background Fill (Deep Matte Cyber Black)
+      ctx.fillStyle = '#0D0E12';
+      ctx.fillRect(0, 0, size, size);
+
+      // Outer Glowing Ring Border
+      ctx.lineWidth = 24;
+      ctx.strokeStyle = '#2B3245';
+      ctx.stroke();
+
+      // Render V Logo Shape from user image concept
+      ctx.fillStyle = '#E2E8F0';
+      ctx.beginPath();
+      // Main V Curves
+      ctx.moveTo(center - 320, center - 240);
+      ctx.bezierCurveTo(center - 180, center + 380, center - 80, center + 380, center, center + 380);
+      ctx.bezierCurveTo(center + 80, center + 380, center + 180, center + 380, center + 320, center - 240);
+      ctx.lineTo(center + 200, center - 240);
+      ctx.bezierCurveTo(center + 120, center + 180, center - 120, center + 180, center - 200, center - 240);
+      ctx.closePath();
+      ctx.fill();
+
+      // Swirl Vortex Spiral Overlay Effect
+      ctx.save();
+      ctx.translate(center, center - 40);
+      ctx.strokeStyle = '#0D0E12';
+      ctx.lineWidth = 10;
+      for (let i = 0; i < 35; i++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 10 + (i * 7), i * 0.3, (i * 0.3) + Math.PI, false);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // VORTEX Text Branding at Bottom
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = '900 78px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.letterSpacing = '14px';
+      ctx.fillText('VORTEX', center, center + 320);
+
+      ctx.restore();
+    }
+
+    window.onload = renderVortexRoundLogo;
+
+    function downloadPng() {
+      const link = document.createElement('a');
+      link.download = 'vortex-round-logo-1024x1024.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
