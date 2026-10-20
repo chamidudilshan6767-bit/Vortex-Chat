@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VORTEX CHAT</title>
+
+  <!-- PWA & Mobile App Icon Integration -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230B0D11'/><rect x='16' y='16' width='480' height='480' rx='112' fill='none' stroke='%233D465C' stroke-width='16'/><path d='M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z' fill='%23E2E8F0'/><path d='M180 140 L256 310 L332 140' fill='none' stroke='%233B82F6' stroke-width='12' stroke-linecap='round'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230B0D11'/><path d='M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z' fill='%23E2E8F0'/></svg>">
+  <meta name="theme-color" content="#0B0D11">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -85,8 +91,12 @@
   <header class="sticky top-0 z-40 bg-[#0B0D11]/90 backdrop-blur-md border-b border-[#1F2430] px-4 py-3">
     <div class="max-w-3xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-700 to-slate-400 flex items-center justify-center font-black text-slate-950 text-xl tracking-wider shadow-inner">
-          V
+        <!-- VORTEX CYBER EMBLEM LOGO -->
+        <div class="w-10 h-10 rounded-xl bg-[#141821] border border-slate-700 flex items-center justify-center shadow-lg relative overflow-hidden group">
+          <svg class="w-7 h-7" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z" fill="#E2E8F0"/>
+            <path d="M180 140 L256 310 L332 140" stroke="#3B82F6" stroke-width="16" stroke-linecap="round"/>
+          </svg>
         </div>
         <div>
           <h1 class="font-extrabold text-lg tracking-wider text-slate-100 flex items-center gap-2">
@@ -115,8 +125,12 @@
     <!-- AUTHENTICATION VIEW (WITH PASSWORD SUPPORT) -->
     <section id="authSection" class="py-8">
       <div class="card-matte rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 text-2xl">
-          <i class="fa-solid fa-user-shield"></i>
+        <!-- AUTH LOGO EMBLEM -->
+        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-[#0B0D11] border border-slate-700 flex items-center justify-center shadow-xl">
+          <svg class="w-14 h-14" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M140 140 L256 380 L372 140 L300 140 L256 250 L212 140 Z" fill="#E2E8F0"/>
+            <path d="M180 140 L256 310 L332 140" stroke="#3B82F6" stroke-width="16" stroke-linecap="round"/>
+          </svg>
         </div>
         <h2 id="langAuthTitle" class="text-2xl font-bold text-white mb-1">Welcome to VORTEX</h2>
         <p id="langAuthSubtitle" class="text-xs text-slate-400 mb-6">Enter your username and password to log in or create a new account.</p>
@@ -687,7 +701,7 @@
             authorUsername: 'vortex_official',
             authorDisplayName: 'Vortex System',
             authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
-            content: 'Welcome to VORTEX Chat v3.5! Now with Password Security on Login and Signup.',
+            content: 'Welcome to VORTEX Chat v3.5! Powered by custom Cyber Emblem Branding and Password Protection.',
             link: 'https://netlify.com',
             file: null,
             likes: ['vortex_official'],
@@ -754,7 +768,6 @@
       }
     }
 
-    /* AUTHENTICATION LOGIC WITH PASSWORD VERIFICATION */
     function handleAuth(e) {
       e.preventDefault();
       const usernameInput = document.getElementById('authUsername').value.trim().toLowerCase();
@@ -768,7 +781,6 @@
 
       let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
       
-      // Existing User Verification
       if (users[usernameInput]) {
         if (users[usernameInput].password === passwordInput) {
           currentUser = users[usernameInput];
@@ -779,7 +791,6 @@
           showToast('Incorrect password! Please try again.');
         }
       } else {
-        // Create New User Account
         users[usernameInput] = {
           username: usernameInput,
           password: passwordInput,
@@ -858,7 +869,6 @@
       document.getElementById('langNavAdmin').textContent = lang.navAdmin;
     }
 
-    /* FILE DETECT & POSTING */
     function detectFileCategory(file) {
       if (file.type.startsWith('image/')) return 'image';
       if (file.type.startsWith('video/')) return 'video';
