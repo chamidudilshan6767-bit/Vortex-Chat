@@ -90,7 +90,7 @@
         </div>
         <div>
           <h1 class="font-extrabold text-lg tracking-wider text-slate-100 flex items-center gap-2">
-            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v3.0 Ultra</span>
+            VORTEX <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v3.5 Safe</span>
           </h1>
         </div>
       </div>
@@ -112,14 +112,14 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-3xl mx-auto w-full flex-grow p-3 sm:p-4 mb-20">
 
-    <!-- AUTHENTICATION VIEW -->
+    <!-- AUTHENTICATION VIEW (WITH PASSWORD SUPPORT) -->
     <section id="authSection" class="py-8">
       <div class="card-matte rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center">
         <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 text-2xl">
-          <i class="fa-solid fa-shield-halved"></i>
+          <i class="fa-solid fa-user-shield"></i>
         </div>
         <h2 id="langAuthTitle" class="text-2xl font-bold text-white mb-1">Welcome to VORTEX</h2>
-        <p id="langAuthSubtitle" class="text-xs text-slate-400 mb-6">Enter your handle and profile details to get started.</p>
+        <p id="langAuthSubtitle" class="text-xs text-slate-400 mb-6">Enter your username and password to log in or create a new account.</p>
 
         <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4 text-left">
           <div class="flex flex-col items-center justify-center gap-2 mb-2">
@@ -130,7 +130,7 @@
               </label>
               <input type="file" id="authAvatarInput" accept="image/*" class="hidden" onchange="previewAuthAvatar(event)">
             </div>
-            <span id="langUploadAvatar" class="text-xs text-slate-400">Upload Profile Picture (Optional)</span>
+            <span id="langUploadAvatar" class="text-xs text-slate-400">Upload Profile Picture (For New Users)</span>
           </div>
 
           <div>
@@ -142,12 +142,20 @@
           </div>
 
           <div>
-            <label id="langDisplaynameLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Display Name</label>
+            <label id="langPasswordLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Account Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><i class="fa-solid fa-key text-xs"></i></span>
+              <input type="password" id="authPassword" required minlength="4" placeholder="••••••••" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 pl-8 pr-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
+            </div>
+          </div>
+
+          <div>
+            <label id="langDisplaynameLabel" class="block text-xs font-semibold uppercase text-slate-400 mb-1">Display Name (Optional for New Users)</label>
             <input type="text" id="authDisplayName" placeholder="e.g. Alex Vance" class="w-full bg-[#0B0D11] border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-slate-400 transition">
           </div>
 
           <button type="submit" class="w-full btn-silver font-bold py-3 rounded-xl text-sm tracking-wide shadow-md hover:opacity-95 transition">
-            <span id="langEnterVortex">ENTER VORTEX</span>
+            <span id="langEnterVortex">LOGIN / SIGN UP</span>
           </button>
         </form>
       </div>
@@ -588,17 +596,17 @@
 
   <!-- APPLICATION LOGIC -->
   <script>
-    const STORAGE_USERS = 'vortex_users_v3';
-    const STORAGE_CURRENT = 'vortex_current_user_v3';
-    const STORAGE_POSTS = 'vortex_posts_v3';
-    const STORAGE_GROUPS = 'vortex_groups_v3';
-    const STORAGE_MESSAGES = 'vortex_messages_v3';
+    const STORAGE_USERS = 'vortex_users_v3_5';
+    const STORAGE_CURRENT = 'vortex_current_user_v3_5';
+    const STORAGE_POSTS = 'vortex_posts_v3_5';
+    const STORAGE_GROUPS = 'vortex_groups_v3_5';
+    const STORAGE_MESSAGES = 'vortex_messages_v3_5';
 
     const MASTER_ADMIN_PASSKEY = "#chAmidu_diLshan*600008*#";
 
     let currentUser = JSON.parse(localStorage.getItem(STORAGE_CURRENT)) || null;
     let currentLang = 'en'; 
-    let pendingPostFile = null; // Object { name, type, size, data, category }
+    let pendingPostFile = null;
     let pendingAuthImg = null;
     let pendingGroupImg = null;
     let pendingEditImg = null;
@@ -611,11 +619,12 @@
     const i18n = {
       en: {
         authTitle: "Welcome to VORTEX",
-        authSub: "Enter your handle and profile details to get started.",
-        uploadAvatar: "Upload Profile Picture (Optional)",
+        authSub: "Enter your username and password to log in or create an account.",
+        uploadAvatar: "Upload Profile Picture (For New Users)",
         userLabel: "Username (@handle)",
-        dispLabel: "Display Name",
-        enterBtn: "ENTER VORTEX",
+        passLabel: "Account Password",
+        dispLabel: "Display Name (Optional for New Users)",
+        enterBtn: "LOGIN / SIGN UP",
         publicFeed: "Public Cyber Wall",
         anonPost: "Anon Mode",
         attachFile: "Attach File (Video, Audio, APK, Doc)",
@@ -635,11 +644,12 @@
       },
       si: {
         authTitle: "VORTEX වෙත සාදරයෙන් පිළිගනිමු",
-        authSub: "ආරම්භ කිරීමට ඔබගේ username සහ profile තොරතුරු ඇතුළත් කරන්න.",
-        uploadAvatar: "Profile පින්තූරයක් එක් කරන්න (අත්‍යවශ්‍ය නොවේ)",
+        authSub: "Log in වීමට හෝ නව ගිණුමක් තැනීමට Username සහ Password ඇතුළත් කරන්න.",
+        uploadAvatar: "Profile පින්තූරයක් එක් කරන්න (අලුත් අයට)",
         userLabel: "Username (@handle)",
-        dispLabel: "පෙන්විය යුතු නම (Display Name)",
-        enterBtn: "VORTEX වෙත පිවිසෙන්න",
+        passLabel: "Account Password එක",
+        dispLabel: "පෙන්විය යුතු නම (නව ගිණුම් සඳහා)",
+        enterBtn: "LOGIN / SIGN UP",
         publicFeed: "පොදු Cyber Wall එක",
         anonPost: "රහස්‍ය (Anon) මාදිලිය",
         attachFile: "ඕනෑම ගොනුවක් අමුණන්න (Video, Audio, APK, File)",
@@ -677,13 +687,11 @@
             authorUsername: 'vortex_official',
             authorDisplayName: 'Vortex System',
             authorAvatar: 'https://placehold.co/150x150/111827/9CA3AF?text=VX',
-            content: 'Welcome to VORTEX Chat v3.0! Support for sharing links, audio, videos, APKs, documents, and messages. Posts remain permanently until deleted by the creator or Root Admin.',
+            content: 'Welcome to VORTEX Chat v3.5! Now with Password Security on Login and Signup.',
             link: 'https://netlify.com',
             file: null,
             likes: ['vortex_official'],
-            comments: [
-              { author: 'cyber_pioneer', text: 'Awesome update with full file persistence!' }
-            ],
+            comments: [],
             isAnon: false,
             timestamp: Date.now() - 3600000
           }
@@ -746,34 +754,48 @@
       }
     }
 
+    /* AUTHENTICATION LOGIC WITH PASSWORD VERIFICATION */
     function handleAuth(e) {
       e.preventDefault();
       const usernameInput = document.getElementById('authUsername').value.trim().toLowerCase();
+      const passwordInput = document.getElementById('authPassword').value.trim();
       const displayNameInput = document.getElementById('authDisplayName').value.trim() || usernameInput;
 
-      if (!usernameInput) return;
+      if (!usernameInput || !passwordInput) {
+        showToast('Please enter both username and password.');
+        return;
+      }
 
       let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
       
-      if (!users[usernameInput]) {
+      // Existing User Verification
+      if (users[usernameInput]) {
+        if (users[usernameInput].password === passwordInput) {
+          currentUser = users[usernameInput];
+          localStorage.setItem(STORAGE_CURRENT, JSON.stringify(currentUser));
+          showToast(`Welcome back, @${currentUser.username}!`);
+          checkAuthState();
+        } else {
+          showToast('Incorrect password! Please try again.');
+        }
+      } else {
+        // Create New User Account
         users[usernameInput] = {
           username: usernameInput,
+          password: passwordInput,
           displayName: displayNameInput,
           avatar: pendingAuthImg || DEFAULT_AVATAR,
           bio: 'Decentralized Vortex network enthusiast.',
           joinedAt: new Date().toLocaleDateString()
         };
-      } else {
-        if (pendingAuthImg) users[usernameInput].avatar = pendingAuthImg;
-        if (displayNameInput) users[usernameInput].displayName = displayNameInput;
+
+        localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+        currentUser = users[usernameInput];
+        localStorage.setItem(STORAGE_CURRENT, JSON.stringify(currentUser));
+
+        showToast(`Account created for @${currentUser.username}`);
+        checkAuthState();
       }
-
-      localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
-      currentUser = users[usernameInput];
-      localStorage.setItem(STORAGE_CURRENT, JSON.stringify(currentUser));
-
-      showToast(`Logged in as @${currentUser.username}`);
-      checkAuthState();
     }
 
     function logout() {
@@ -815,6 +837,7 @@
       document.getElementById('langAuthSubtitle').textContent = lang.authSub;
       document.getElementById('langUploadAvatar').textContent = lang.uploadAvatar;
       document.getElementById('langUsernameLabel').textContent = lang.userLabel;
+      document.getElementById('langPasswordLabel').textContent = lang.passLabel;
       document.getElementById('langDisplaynameLabel').textContent = lang.dispLabel;
       document.getElementById('langEnterVortex').textContent = lang.enterBtn;
       document.getElementById('langPublicFeed').textContent = lang.publicFeed;
@@ -835,7 +858,7 @@
       document.getElementById('langNavAdmin').textContent = lang.navAdmin;
     }
 
-    /* MULTI-FILE HELPER FUNCTIONS */
+    /* FILE DETECT & POSTING */
     function detectFileCategory(file) {
       if (file.type.startsWith('image/')) return 'image';
       if (file.type.startsWith('video/')) return 'video';
@@ -1091,7 +1114,7 @@
       }
     }
 
-    /* GROUPS WITH FILES */
+    /* GROUPS SYSTEM */
     function openCreateGroupModal() {
       document.getElementById('modalCreateGroup').classList.remove('hidden');
     }
@@ -1343,7 +1366,7 @@
       `).join('');
     }
 
-    /* DIRECT CHAT WITH FILE SHARING */
+    /* DIRECT CHAT */
     function startOrOpenChat() {
       const target = document.getElementById('targetChatUsername').value.trim().toLowerCase();
       if (!target) {
